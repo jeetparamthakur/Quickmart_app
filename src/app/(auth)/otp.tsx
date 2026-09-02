@@ -40,7 +40,7 @@ export default function OtpScreen() {
     setError('');
     try {
       const result = await authService.verifyOtp(phone, code);
-      await login(result.token, result.user);
+      await login(result.token, result.user, result.refreshToken);
       router.replace('/(onboarding)/location');
     } catch {
       setError('Invalid OTP. Please try again.');

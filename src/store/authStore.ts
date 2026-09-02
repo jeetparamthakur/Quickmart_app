@@ -2,9 +2,9 @@ import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { mockUser } from '@/services/mock/data';
+import { setStoredTokens, clearStoredTokens } from '@/services/api/client';
 
-type User = typeof mockUser;
+type User = { id: string; name?: string; phone?: string; email?: string; role?: string };
 const TOKEN_KEY = 'auth-token';
 
 type AuthState = {
@@ -14,7 +14,7 @@ type AuthState = {
   isAuthenticated: boolean;
   isHydrated: boolean;
   setPhone: (phone: string) => void;
-  login: (token: string, user: User) => Promise<void>;
+  login: (token: string, user: User, refreshToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   setHydrated: () => void;
   restoreToken: () => Promise<void>;
@@ -29,12 +29,12 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isHydrated: false,
       setPhone: (phone) => set({ phone }),
-      login: async (token, user) => {
-        await SecureStore.setItemAsync(TOKEN_KEY, token);
+      login: async (token, user, refreshToken) => {
+        await setStoredTokens(token, refreshToken);
         set({ token, user, isAuthenticated: true });
       },
       logout: async () => {
-        await SecureStore.deleteItemAsync(TOKEN_KEY).catch(() => {});
+        await clearStoredTokens();
         set({ token: null, user: null, phone: '', isAuthenticated: false });
       },
       setHydrated: () => set({ isHydrated: true }),
