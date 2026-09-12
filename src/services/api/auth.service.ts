@@ -4,6 +4,14 @@ import { simulateDelay } from './utils';
 import { mockUser } from '../mock/data';
 import { USE_MOCK } from '@/constants/api';
 
+function toE164(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length === 10) return `+91${digits}`;
+  if (digits.length === 12 && digits.startsWith('91')) return `+${digits}`;
+  if (phone.startsWith('+')) return `+${digits}`;
+  return `+91${digits}`;
+}
+
 export type AuthResult = {
   token: string;
   refreshToken: string;
@@ -18,7 +26,7 @@ export const authService = {
       if (phone.length < 10) return { success: false, message: 'Invalid phone number' };
       return { success: true, message: 'OTP sent successfully' };
     }
-    const normalized = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
+    const normalized = toE164(phone);
     await apiRequest('/auth/otp/send', {
       method: 'POST',
       skipAuth: true,
@@ -30,14 +38,14 @@ export const authService = {
   async verifyOtp(phone: string, otp: string): Promise<AuthResult> {
     if (USE_MOCK) {
       await simulateDelay(500, 1200);
-      if (otp.length !== 6) throw new Error('Invalid OTP');
+      if (otp !== '000000') throw new Error('Invalid OTP');
       return {
         token: 'mock-jwt-token-' + Date.now(),
         refreshToken: 'mock-refresh',
         user: { id: mockUser.id, name: mockUser.name, phone, role: 'CUSTOMER' },
       };
     }
-    const normalized = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
+    const normalized = toE164(phone);
     const res = await apiRequest<{
       token: string;
       refreshToken: string;

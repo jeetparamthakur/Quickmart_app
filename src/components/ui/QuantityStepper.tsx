@@ -9,7 +9,8 @@ type Props = {
   onDecrease: () => void;
   min?: number;
   max?: number;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'overlay';
+  disabled?: boolean;
 };
 
 export function QuantityStepper({
@@ -19,39 +20,56 @@ export function QuantityStepper({
   min = 0,
   max = 99,
   size = 'md',
+  disabled = false,
 }: Props) {
   const { colors, radius, spacing, typography } = useTheme();
   const isSmall = size === 'sm';
+  const isOverlay = size === 'overlay';
 
   const handleIncrease = () => {
-    if (quantity < max) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      onIncrease();
-    }
+    if (disabled || quantity >= max) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onIncrease();
   };
 
   const handleDecrease = () => {
-    if (quantity > min) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      onDecrease();
-    }
+    if (disabled || quantity <= min) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onDecrease();
   };
 
   if (quantity === 0) {
     return (
       <TouchableOpacity
         onPress={handleIncrease}
+        disabled={disabled}
+        activeOpacity={0.85}
         style={[
           styles.addBtn,
           {
-            backgroundColor: colors.primary,
-            borderRadius: radius.sm,
-            paddingHorizontal: isSmall ? spacing.sm : spacing.md,
-            paddingVertical: isSmall ? 4 : spacing.sm,
+            backgroundColor: isOverlay ? colors.surface : colors.primary,
+            borderRadius: isOverlay ? 10 : radius.sm,
+            paddingHorizontal: isOverlay ? 14 : isSmall ? spacing.sm : spacing.md,
+            paddingVertical: isOverlay ? 6 : isSmall ? 4 : spacing.sm,
+            borderWidth: isOverlay ? 2 : 0,
+            borderColor: colors.primary,
+            opacity: disabled ? 0.45 : 1,
           },
+          isOverlay ? styles.overlayShadow : null,
         ]}
       >
-        <Text style={[typography.label, { color: '#FFF', fontSize: isSmall ? 12 : 14 }]}>ADD</Text>
+        <Text
+          style={[
+            typography.label,
+            {
+              color: isOverlay ? colors.primary : '#FFF',
+              fontSize: isOverlay ? 13 : isSmall ? 12 : 14,
+              fontWeight: '800',
+            },
+          ]}
+        >
+          ADD
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -60,21 +78,28 @@ export function QuantityStepper({
     <View
       style={[
         styles.stepper,
+        isOverlay ? styles.overlayShadow : null,
         {
           backgroundColor: colors.primary,
-          borderRadius: radius.sm,
-          paddingHorizontal: spacing.xs,
+          borderRadius: isOverlay ? radius.md : radius.sm,
+          paddingHorizontal: isOverlay ? 2 : spacing.xs,
+          opacity: disabled ? 0.45 : 1,
         },
       ]}
     >
-      <TouchableOpacity onPress={handleDecrease} style={styles.stepBtn}>
-        <Text style={[styles.stepText, { fontSize: isSmall ? 16 : 18 }]}>−</Text>
+      <TouchableOpacity onPress={handleDecrease} style={styles.stepBtn} disabled={disabled}>
+        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>−</Text>
       </TouchableOpacity>
-      <Text style={[typography.label, { color: '#FFF', minWidth: 20, textAlign: 'center', fontSize: isSmall ? 13 : 15 }]}>
+      <Text
+        style={[
+          typography.label,
+          { color: '#FFF', minWidth: 18, textAlign: 'center', fontSize: isOverlay || isSmall ? 13 : 15 },
+        ]}
+      >
         {quantity}
       </Text>
-      <TouchableOpacity onPress={handleIncrease} style={styles.stepBtn}>
-        <Text style={[styles.stepText, { fontSize: isSmall ? 16 : 18 }]}>+</Text>
+      <TouchableOpacity onPress={handleIncrease} style={styles.stepBtn} disabled={disabled}>
+        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -85,10 +110,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  overlayShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 4,
+  },
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   stepBtn: {
     padding: 6,

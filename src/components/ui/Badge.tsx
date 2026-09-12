@@ -13,7 +13,7 @@ export function Badge({ label, variant = 'primary', style }: Props) {
 
   const variantColors = {
     primary: { bg: colors.primaryLight, text: colors.primary },
-    accent: { bg: colors.accentLight, text: '#B45309' },
+    accent: { bg: colors.accentLight, text: colors.primaryDark },
     success: { bg: colors.successLight, text: colors.success },
     error: { bg: colors.errorLight, text: colors.error },
     neutral: { bg: colors.surfaceSecondary, text: colors.textSecondary },

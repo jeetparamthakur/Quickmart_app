@@ -6,17 +6,17 @@ import { Address } from '@/types/location';
 
 export const categories: Category[] = [
   { id: 'cat-1', name: 'Grocery', slug: 'grocery', icon: '🛒', image: 'https://picsum.photos/seed/grocery/200/200', color: '#E8F5E9' },
-  { id: 'cat-2', name: 'Fruits & Veg', slug: 'fruits-vegetables', icon: '🥬', image: 'https://picsum.photos/seed/fruits/200/200', color: '#FFF3E0' },
-  { id: 'cat-3', name: 'Dairy', slug: 'dairy', icon: '🥛', image: 'https://picsum.photos/seed/dairy/200/200', color: '#E3F2FD' },
-  { id: 'cat-4', name: 'Snacks', slug: 'snacks', icon: '🍿', image: 'https://picsum.photos/seed/snacks/200/200', color: '#FCE4EC' },
-  { id: 'cat-5', name: 'Beverages', slug: 'beverages', icon: '🥤', image: 'https://picsum.photos/seed/beverages/200/200', color: '#E0F7FA' },
-  { id: 'cat-6', name: 'Electronics', slug: 'electronics', icon: '📱', image: 'https://picsum.photos/seed/electronics/200/200', color: '#EDE7F6' },
-  { id: 'cat-7', name: 'Beauty', slug: 'beauty', icon: '💄', image: 'https://picsum.photos/seed/beauty/200/200', color: '#F3E5F5' },
-  { id: 'cat-8', name: 'Fashion', slug: 'fashion', icon: '👕', image: 'https://picsum.photos/seed/fashion/200/200', color: '#FFF8E1' },
-  { id: 'cat-9', name: 'Pharmacy', slug: 'pharmacy', icon: '💊', image: 'https://picsum.photos/seed/pharmacy/200/200', color: '#FFEBEE' },
-  { id: 'cat-10', name: 'Home', slug: 'home-essentials', icon: '🏠', image: 'https://picsum.photos/seed/home/200/200', color: '#EFEBE9' },
-  { id: 'cat-11', name: 'Pet Supplies', slug: 'pet-supplies', icon: '🐾', image: 'https://picsum.photos/seed/pets/200/200', color: '#E8EAF6' },
-  { id: 'cat-12', name: 'Local Products', slug: 'local-products', icon: '🏪', image: 'https://picsum.photos/seed/local/200/200', color: '#F1F8E9' },
+  { id: 'cat-2', name: 'Fruits & Veg', slug: 'fruits-vegetables', icon: '🥬', image: 'https://picsum.photos/seed/fruits/200/200', color: '#F1F8E9' },
+  { id: 'cat-3', name: 'Dairy', slug: 'dairy', icon: '🥛', image: 'https://picsum.photos/seed/dairy/200/200', color: '#C8E6C9' },
+  { id: 'cat-4', name: 'Snacks', slug: 'snacks', icon: '🍿', image: 'https://picsum.photos/seed/snacks/200/200', color: '#DCEDC8' },
+  { id: 'cat-5', name: 'Beverages', slug: 'beverages', icon: '🥤', image: 'https://picsum.photos/seed/beverages/200/200', color: '#A5D6A7' },
+  { id: 'cat-6', name: 'Electronics', slug: 'electronics', icon: '📱', image: 'https://picsum.photos/seed/electronics/200/200', color: '#E8F5E9' },
+  { id: 'cat-7', name: 'Beauty', slug: 'beauty', icon: '💄', image: 'https://picsum.photos/seed/beauty/200/200', color: '#F1F8E9' },
+  { id: 'cat-8', name: 'Fashion', slug: 'fashion', icon: '👕', image: 'https://picsum.photos/seed/fashion/200/200', color: '#C8E6C9' },
+  { id: 'cat-9', name: 'Pharmacy', slug: 'pharmacy', icon: '💊', image: 'https://picsum.photos/seed/pharmacy/200/200', color: '#DCEDC8' },
+  { id: 'cat-10', name: 'Home', slug: 'home-essentials', icon: '🏠', image: 'https://picsum.photos/seed/home/200/200', color: '#E8F5E9' },
+  { id: 'cat-11', name: 'Pet Supplies', slug: 'pet-supplies', icon: '🐾', image: 'https://picsum.photos/seed/pets/200/200', color: '#F1F8E9' },
+  { id: 'cat-12', name: 'Local Products', slug: 'local-products', icon: '🏪', image: 'https://picsum.photos/seed/local/200/200', color: '#C8E6C9' },
 ];
 
 export const stores: Store[] = [
@@ -125,12 +125,12 @@ function buildProducts(): Product[] {
 export const products = buildProducts();
 
 export const banners: Banner[] = [
-  { id: 'banner-1', title: 'Flat 50% OFF', subtitle: 'On first order', image: 'https://picsum.photos/seed/banner1/800/300', backgroundColor: '#0D7A5F', targetType: 'category', targetId: 'cat-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 1 },
-  { id: 'banner-2', title: 'Free Delivery', subtitle: 'On orders above ₹199', image: 'https://picsum.photos/seed/banner2/800/300', backgroundColor: '#F5A623', targetType: 'url', targetId: '', startDate: '2026-01-01', endDate: '2026-12-31', position: 2 },
-  { id: 'banner-3', title: 'Grocery Deals', subtitle: 'Up to 40% off', image: 'https://picsum.photos/seed/banner3/800/300', backgroundColor: '#065A46', targetType: 'category', targetId: 'cat-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 3 },
-  { id: 'banner-4', title: 'Electronics Sale', subtitle: 'Limited time', image: 'https://picsum.photos/seed/banner4/800/300', backgroundColor: '#1A1A2E', targetType: 'category', targetId: 'cat-6', startDate: '2026-01-01', endDate: '2026-12-31', position: 4 },
-  { id: 'banner-5', title: 'Festival Offers', subtitle: 'Celebrate with savings', image: 'https://picsum.photos/seed/banner5/800/300', backgroundColor: '#B45309', targetType: 'store', targetId: 'store-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 5 },
-  { id: 'banner-6', title: 'New Store Launch', subtitle: 'Tech Zone is here', image: 'https://picsum.photos/seed/banner6/800/300', backgroundColor: '#4338CA', targetType: 'store', targetId: 'store-8', startDate: '2026-01-01', endDate: '2026-12-31', position: 6 },
+  { id: 'banner-1', title: 'Flat 50% OFF', subtitle: 'On first order', image: 'https://picsum.photos/seed/banner1/800/300', backgroundColor: '#2E7D32', targetType: 'category', targetId: 'cat-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 1 },
+  { id: 'banner-2', title: 'Free Delivery', subtitle: 'On orders above ₹199', image: 'https://picsum.photos/seed/banner2/800/300', backgroundColor: '#8BC34A', targetType: 'url', targetId: '', startDate: '2026-01-01', endDate: '2026-12-31', position: 2 },
+  { id: 'banner-3', title: 'Grocery Deals', subtitle: 'Up to 40% off', image: 'https://picsum.photos/seed/banner3/800/300', backgroundColor: '#1B5E20', targetType: 'category', targetId: 'cat-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 3 },
+  { id: 'banner-4', title: 'Electronics Sale', subtitle: 'Limited time', image: 'https://picsum.photos/seed/banner4/800/300', backgroundColor: '#43A047', targetType: 'category', targetId: 'cat-6', startDate: '2026-01-01', endDate: '2026-12-31', position: 4 },
+  { id: 'banner-5', title: 'Festival Offers', subtitle: 'Celebrate with savings', image: 'https://picsum.photos/seed/banner5/800/300', backgroundColor: '#66BB6A', targetType: 'store', targetId: 'store-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 5 },
+  { id: 'banner-6', title: 'New Store Launch', subtitle: 'Tech Zone is here', image: 'https://picsum.photos/seed/banner6/800/300', backgroundColor: '#388E3C', targetType: 'store', targetId: 'store-8', startDate: '2026-01-01', endDate: '2026-12-31', position: 6 },
 ];
 
 export const addresses: Address[] = [

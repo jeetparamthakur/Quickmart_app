@@ -11,8 +11,14 @@ export function setLocale(locale: keyof typeof translations) {
   currentLocale = locale;
 }
 
-export function t(key: TranslationKey): string {
-  return translations[currentLocale][key] ?? translations.en[key] ?? key;
+export function t(key: TranslationKey, vars?: Record<string, string | number>): string {
+  let value: string = translations[currentLocale][key] ?? translations.en[key] ?? key;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      value = value.split(`{${k}}`).join(String(v));
+    }
+  }
+  return value;
 }
 
 export function useTranslation() {

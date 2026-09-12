@@ -14,7 +14,7 @@ export const homeService = {
       await simulateDelay();
       return banners.filter((b) => new Date(b.endDate) >= new Date());
     }
-    const data = await apiRequest<Record<string, unknown>[]>('/banners');
+    const data = await apiRequest<Record<string, unknown>[]>('/banners?placement=HOME_TOP');
     return data.map(mapBackendBanner);
   },
 

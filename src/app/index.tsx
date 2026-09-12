@@ -42,20 +42,20 @@ export default function SplashScreenRoute() {
   }, [authHydrated, locHydrated, isAuthenticated, hasLocation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.primary }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Animated.View entering={FadeIn.duration(800)} style={styles.logoContainer}>
-        <View style={[styles.logoCircle, { backgroundColor: '#FFF' }]}>
+        <View style={[styles.logoCircle, { backgroundColor: colors.surface }]}>
           <Text style={styles.logoEmoji}>🛍️</Text>
         </View>
         <Animated.Text
           entering={FadeInDown.delay(400).duration(600)}
-          style={[typography.h1, { color: '#FFF', marginTop: spacing.xxl }]}
+          style={[typography.h1, { color: colors.text, marginTop: spacing.xxl }]}
         >
           {t('appName')}
         </Animated.Text>
         <Animated.Text
           entering={FadeInDown.delay(600).duration(600)}
-          style={[typography.body, { color: 'rgba(255,255,255,0.85)', marginTop: spacing.sm }]}
+          style={[typography.body, { color: colors.textSecondary, marginTop: spacing.sm }]}
         >
           {t('tagline')}
         </Animated.Text>
@@ -68,11 +68,11 @@ export default function SplashScreenRoute() {
               <Animated.View
                 key={i}
                 entering={FadeIn.delay(i * 200)}
-                style={[styles.dot, { backgroundColor: 'rgba(255,255,255,0.8)' }]}
+                style={[styles.dot, { backgroundColor: colors.primary }]}
               />
             ))}
           </View>
-          <Text style={[typography.bodySmall, { color: 'rgba(255,255,255,0.7)', marginTop: spacing.md }]}>
+          <Text style={[typography.bodySmall, { color: colors.textSecondary, marginTop: spacing.md }]}>
             Detecting your location...
           </Text>
         </Animated.View>

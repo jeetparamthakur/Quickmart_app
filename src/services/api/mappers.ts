@@ -1,7 +1,7 @@
 import { Product } from '@/types/product';
 import { Store } from '@/types/store';
 import { Category } from '@/types/product';
-import { Banner } from '@/types/banner';
+import { Banner, BannerTargetType } from '@/types/banner';
 
 export function mapBackendProduct(sp: Record<string, unknown>): Product {
   const mp = sp.masterProduct as Record<string, unknown> | undefined;
@@ -53,15 +53,37 @@ export function mapBackendCategory(c: Record<string, unknown>): Category {
   };
 }
 
+function parseBannerLink(linkUrl?: string | null): { targetType: BannerTargetType; targetId: string } {
+  if (!linkUrl) {
+    return { targetType: 'url', targetId: '' };
+  }
+
+  const trimmed = linkUrl.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return { targetType: 'url', targetId: trimmed };
+  }
+
+  const match = trimmed.match(/^\/(category|store|product)\/([^/?#]+)/i);
+  if (match) {
+    const type = match[1].toLowerCase() as BannerTargetType;
+    return { targetType: type, targetId: match[2] };
+  }
+
+  return { targetType: 'url', targetId: trimmed };
+}
+
 export function mapBackendBanner(b: Record<string, unknown>): Banner {
+  const { targetType, targetId } = parseBannerLink(b.linkUrl as string | null | undefined);
+
   return {
     id: b.id as string,
     title: (b.title as string) ?? '',
-    subtitle: (b.subtitle as string) ?? '',
     image: (b.imageUrl as string) ?? 'https://picsum.photos/800/300',
-    linkType: 'category',
-    linkValue: '',
-    startDate: (b.startDate as string) ?? new Date().toISOString(),
-    endDate: (b.endDate as string) ?? new Date().toISOString(),
+    backgroundColor: '#2E7D32',
+    targetType,
+    targetId,
+    startDate: new Date().toISOString(),
+    endDate: '2099-12-31T23:59:59.000Z',
+    position: (b.sortOrder as number) ?? 0,
   };
 }

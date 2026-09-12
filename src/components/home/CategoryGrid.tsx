@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Category } from '@/types/product';
 import { useTheme } from '@/context/ThemeContext';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const H_PAD = 16;
+const COLS_VISIBLE = 4;
+const TILE = Math.floor((SCREEN_WIDTH - H_PAD * 2) / COLS_VISIBLE);
 
 type Props = {
   categories: Category[];
@@ -11,44 +16,77 @@ type Props = {
 };
 
 export function CategoryGrid({ categories, horizontal = true }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
-  const renderItem = (cat: Category) => (
+  const renderItem = (cat: Category, width: number) => (
     <TouchableOpacity
       key={cat.id}
       onPress={() => router.push(`/category/${cat.id}`)}
-      style={[styles.item, horizontal ? { marginRight: spacing.md } : { width: '30%', marginBottom: spacing.lg }]}
-      activeOpacity={0.8}
+      style={[styles.item, { width }]}
+      activeOpacity={0.82}
     >
-      <View style={[styles.iconWrap, { backgroundColor: cat.color, borderRadius: radius.md }]}>
+      <View
+        style={[
+          styles.iconWrap,
+          shadows.sm,
+          {
+            backgroundColor: cat.color || colors.primaryLight,
+            borderRadius: radius.lg,
+            width: width - 12,
+            height: width - 4,
+          },
+        ]}
+      >
         <Image source={{ uri: cat.image }} style={styles.image} contentFit="cover" />
-        <Text style={styles.emoji}>{cat.icon}</Text>
+        <View style={styles.emojiBadge}>
+          <Text style={{ fontSize: 16 }}>{cat.icon}</Text>
+        </View>
       </View>
-      <Text style={[typography.caption, { color: colors.text, textAlign: 'center', marginTop: spacing.sm, fontWeight: '500' }]} numberOfLines={2}>
+      <Text
+        style={[typography.caption, { color: colors.text, textAlign: 'center', marginTop: 6, fontWeight: '700' }]}
+        numberOfLines={2}
+      >
         {cat.name}
       </Text>
     </TouchableOpacity>
   );
 
   if (horizontal) {
+    const colCount = Math.ceil(categories.length / 2);
     return (
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: spacing.lg }}>
-        {categories.map(renderItem)}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg }}
+      >
+        <View style={{ width: colCount * TILE, flexDirection: 'row', flexWrap: 'wrap' }}>
+          {categories.map((cat) => renderItem(cat, TILE))}
+        </View>
       </ScrollView>
     );
   }
 
   return (
     <View style={[styles.grid, { paddingHorizontal: spacing.lg }]}>
-      {categories.map(renderItem)}
+      {categories.map((cat) => renderItem(cat, (SCREEN_WIDTH - spacing.lg * 2) / 3))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  item: { alignItems: 'center', width: 72 },
-  iconWrap: { width: 64, height: 64, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' },
-  image: { ...StyleSheet.absoluteFill, opacity: 0.3 },
-  emoji: { fontSize: 28 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  item: { alignItems: 'center', marginBottom: 14 },
+  iconWrap: { overflow: 'hidden' },
+  image: { width: '100%', height: '100%' },
+  emojiBadge: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  grid: { flexDirection: 'row', flexWrap: 'wrap' },
 });

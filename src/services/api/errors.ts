@@ -35,3 +35,12 @@ export function normalizeError(error: unknown, statusCode = 500): AppError {
 export function getUserMessage(error: AppError): string {
   return ERROR_MESSAGES[error.code] ?? error.message;
 }
+
+export function getErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === 'object' && 'appError' in error) {
+    const appError = (error as { appError?: AppError }).appError;
+    if (appError?.message) return appError.message;
+  }
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+}

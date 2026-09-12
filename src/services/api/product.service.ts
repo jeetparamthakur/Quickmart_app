@@ -35,10 +35,14 @@ export const productService = {
       await simulateDelay();
       return products.filter((p) => p.categoryId === categoryId);
     }
-    const res = await apiRequest<{ data: Record<string, unknown>[] }>(
-      `/products?categoryId=${categoryId}&limit=50`,
-    );
-    return res.data.map(mapBackendProduct);
+    try {
+      const res = await apiRequest<{ data: Record<string, unknown>[] }>(
+        `/products?categoryId=${encodeURIComponent(categoryId)}&limit=50`,
+      );
+      return res.data.map(mapBackendProduct);
+    } catch {
+      return [];
+    }
   },
 
   async getByStore(storeId: string): Promise<Product[]> {

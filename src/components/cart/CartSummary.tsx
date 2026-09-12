@@ -1,12 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import { formatPrice } from '@/utils/formatPrice';
+import { t } from '@/i18n';
+
+export type CartChargeLine = {
+  name: string;
+  amount: number;
+};
 
 type Props = {
   subtotal: number;
   deliveryFee: number;
-  platformFee: number;
+  charges?: CartChargeLine[];
+  platformFee?: number;
   tax: number;
   couponDiscount: number;
   savings: number;
@@ -16,45 +24,93 @@ type Props = {
 export function CartSummary({
   subtotal,
   deliveryFee,
-  platformFee,
+  charges,
+  platformFee = 0,
   tax,
   couponDiscount,
   savings,
   total,
 }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const chargeLines =
+    charges && charges.length > 0
+      ? charges
+      : platformFee > 0
+        ? [{ name: t('platformFee'), amount: platformFee }]
+        : [];
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
     <View
       style={[
-        styles.summary,
+        shadows.sm,
         {
           backgroundColor: colors.surface,
-          borderRadius: radius.md,
+          borderRadius: radius.lg,
           padding: spacing.lg,
           borderColor: colors.border,
-          borderWidth: 1,
+          borderWidth: StyleSheet.hairlineWidth,
         },
       ]}
     >
-      <SummaryRow label="Subtotal" value={formatPrice(subtotal)} />
-      <SummaryRow label="Delivery charges" value={formatPrice(deliveryFee)} />
-      <SummaryRow label="Platform fee" value={formatPrice(platformFee)} />
-      <SummaryRow label="Taxes" value={formatPrice(tax)} />
-      {couponDiscount > 0 && <SummaryRow label="Coupon discount" value={`-${formatPrice(couponDiscount)}`} highlight />}
-      {savings > 0 && <SummaryRow label="Total savings" value={formatPrice(savings)} highlight />}
+      <Text style={[typography.label, { color: colors.text, fontSize: 15, marginBottom: spacing.md }]}>
+        {t('billDetails')}
+      </Text>
+
+      <SummaryRow label={t('subtotal')} value={formatPrice(subtotal)} />
+      <SummaryRow
+        label={t('deliveryCharges')}
+        value={deliveryFee === 0 ? t('free') : formatPrice(deliveryFee)}
+        highlight={deliveryFee === 0}
+      />
+      {chargeLines.map((charge) => (
+        <SummaryRow key={charge.name} label={charge.name} value={formatPrice(charge.amount)} />
+      ))}
+      <SummaryRow label={t('taxes')} value={formatPrice(tax)} />
+      {couponDiscount > 0 && (
+        <SummaryRow label={t('couponDiscount')} value={`−${formatPrice(couponDiscount)}`} highlight />
+      )}
+
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
-      <SummaryRow label="Final Total" value={formatPrice(total)} bold />
+      <SummaryRow label={t('finalTotal')} value={formatPrice(total)} bold />
+
+      {savings > 0 ? (
+        <View style={[styles.savings, { backgroundColor: colors.successLight, marginTop: spacing.md }]}>
+          <Ionicons name="pricetag" size={14} color={colors.success} />
+          <Text style={[typography.caption, { color: colors.success, fontWeight: '700', flex: 1 }]}>
+            {t('youSaved', { amount: formatPrice(savings) })}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
 
-function SummaryRow({ label, value, bold, highlight }: { label: string; value: string; bold?: boolean; highlight?: boolean }) {
+function SummaryRow({
+  label,
+  value,
+  bold,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+  highlight?: boolean;
+}) {
   const { colors, typography, spacing } = useTheme();
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
-      <Text style={[bold ? typography.label : typography.bodySmall, { color: colors.textSecondary }]}>{label}</Text>
-      <Text style={[bold ? typography.h3 : typography.bodySmall, { color: highlight ? colors.success : colors.text, fontWeight: bold ? '700' : '400' }]}>
+      <Text style={[bold ? typography.label : typography.bodySmall, { color: colors.textSecondary }]}>
+        {label}
+      </Text>
+      <Text
+        style={[
+          bold ? typography.h3 : typography.bodySmall,
+          {
+            color: highlight ? colors.success : colors.text,
+            fontWeight: bold ? '800' : '500',
+          },
+        ]}
+      >
         {value}
       </Text>
     </View>
@@ -62,6 +118,16 @@ function SummaryRow({ label, value, bold, highlight }: { label: string; value: s
 }
 
 const styles = StyleSheet.create({
-  summary: {},
-  divider: { height: 1, marginVertical: 12 },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginVertical: 10,
+  },
+  savings: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
 });
