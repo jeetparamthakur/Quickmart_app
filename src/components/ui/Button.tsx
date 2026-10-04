@@ -1,16 +1,13 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
 import { useTheme } from '@/context/ThemeContext';
+import { PressableScale } from './PressableScale';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
 
 type Props = {
   title: string;
@@ -20,8 +17,10 @@ type Props = {
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
+  leftIcon?: IoniconName;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  accessibilityLabel?: string;
 };
 
 export function Button({
@@ -32,10 +31,12 @@ export function Button({
   loading = false,
   disabled = false,
   fullWidth = false,
+  leftIcon,
   style,
   textStyle,
+  accessibilityLabel,
 }: Props) {
-  const { colors, radius, spacing } = useTheme();
+  const { colors, radius, spacing, shadows } = useTheme();
 
   const variantStyles: Record<ButtonVariant, { bg: string; text: string; border?: string }> = {
     primary: { bg: colors.primary, text: '#FFFFFF' },
@@ -55,12 +56,14 @@ export function Button({
   const isDisabled = disabled || loading;
 
   return (
-    <TouchableOpacity
+    <PressableScale
       onPress={onPress}
       disabled={isDisabled}
-      activeOpacity={0.8}
+      haptic="medium"
+      accessibilityLabel={accessibilityLabel ?? title}
       style={[
         styles.base,
+        variant === 'primary' ? shadows.sm : null,
         {
           backgroundColor: v.bg,
           borderColor: v.border ?? v.bg,
@@ -77,9 +80,12 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={v.text} />
       ) : (
-        <Text style={[styles.text, { color: v.text, fontSize: s.fontSize }, textStyle]}>{title}</Text>
+        <View style={styles.labelRow}>
+          {leftIcon ? <Ionicons name={leftIcon} size={18} color={v.text} style={styles.leftIcon} /> : null}
+          <Text style={[styles.text, { color: v.text, fontSize: s.fontSize }, textStyle]}>{title}</Text>
+        </View>
       )}
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -87,6 +93,14 @@ const styles = StyleSheet.create({
   base: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  leftIcon: {
+    marginRight: 8,
   },
   text: {
     fontWeight: '600',

@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { Product } from '@/types/product';
 import { useTheme } from '@/context/ThemeContext';
 import { QuantityStepper } from '@/components/ui';
@@ -11,7 +11,7 @@ import { useCartStore } from '@/store/cartStore';
 import { formatPrice, formatDiscount } from '@/utils/formatPrice';
 import { t } from '@/i18n';
 
-const CARD_WIDTH = 148;
+const CARD_WIDTH = 140;
 
 type Props = {
   product: Product;
@@ -112,7 +112,7 @@ export const ProductCard = memo(function ProductCard({ product, width = CARD_WID
 
 const styles = StyleSheet.create({
   card: { marginRight: 12 },
-  imageWrap: { height: 148, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
+  imageWrap: { height: 136, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
   image: { width: '100%', height: '100%' },
   discountBadge: {
     position: 'absolute',
@@ -139,5 +139,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.45)',
   },
-  stepperWrap: { position: 'absolute', right: 8, top: 108 },
+  stepperWrap: { position: 'absolute', right: 8, top: 96 },
 });

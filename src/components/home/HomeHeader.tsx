@@ -1,56 +1,31 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
 import { useTheme } from '@/context/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
+import { PressableScale } from '@/components/ui/PressableScale';
 import { t } from '@/i18n';
 
-type Props = {
-  deliveryMinutes?: number;
-};
-
-export function HomeHeader({ deliveryMinutes = 10 }: Props) {
+export function HomeHeader() {
   const { colors, spacing, typography } = useTheme();
   const { selectedAddress, displayLocation } = useLocation();
-  const pulse = useSharedValue(1);
-
-  useEffect(() => {
-    pulse.value = withRepeat(
-      withSequence(withTiming(1.12, { duration: 700 }), withTiming(1, { duration: 700 })),
-      -1,
-      false
-    );
-  }, [pulse]);
-
-  const boltStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
-  }));
 
   const label = selectedAddress?.label ?? t('deliverTo');
   const line = selectedAddress?.line1 ?? displayLocation;
 
   return (
     <View style={[styles.header, { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }]}>
-      <TouchableOpacity
+      <PressableScale
         style={styles.location}
         onPress={() => router.push('/(onboarding)/location')}
-        activeOpacity={0.8}
+        haptic="selection"
+        accessibilityLabel={`Delivery location, ${label}`}
       >
-        <View style={styles.titleRow}>
-          <Animated.Text style={[styles.bolt, boltStyle]}>⚡</Animated.Text>
-          <Text style={[typography.h2, { color: colors.text, fontWeight: '800', letterSpacing: -0.4 }]}>
-            {t('deliveryInMinutes', { minutes: deliveryMinutes })}
-          </Text>
-        </View>
         <View style={styles.locRow}>
+          <View style={[styles.pin, { backgroundColor: colors.primaryLight }]}>
+            <Ionicons name="location-outline" size={14} color={colors.primary} />
+          </View>
           <Text style={[typography.label, { color: colors.text, maxWidth: '42%' }]} numberOfLines={1}>
             {label}
           </Text>
@@ -58,31 +33,23 @@ export function HomeHeader({ deliveryMinutes = 10 }: Props) {
           <Text style={[typography.caption, { color: colors.textSecondary, flex: 1 }]} numberOfLines={1}>
             {line}
           </Text>
-          <Text style={{ color: colors.textSecondary, marginLeft: 4, fontSize: 9 }}>▼</Text>
+          <Ionicons name="chevron-down" size={14} color={colors.textSecondary} style={{ marginLeft: 4 }} />
         </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => router.push('/(tabs)/profile')}
-        activeOpacity={0.7}
-        hitSlop={8}
-        style={styles.avatar}
-      >
-        <Ionicons name="person-outline" size={24} color={colors.primary} />
-      </TouchableOpacity>
+      </PressableScale>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   location: { flex: 1, minWidth: 0 },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  bolt: { fontSize: 18 },
-  locRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
-  avatar: {
-    paddingTop: 2,
+  locRow: { flexDirection: 'row', alignItems: 'center' },
+  pin: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 8,
   },
 });

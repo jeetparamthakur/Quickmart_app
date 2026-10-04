@@ -1,3 +1,5 @@
+export type PartnerType = 'STORE' | 'FOOD_STORE';
+
 export type Store = {
   id: string;
   name: string;
@@ -13,4 +15,7 @@ export type Store = {
   categories: string[];
   latitude: number;
   longitude: number;
+  partnerType?: PartnerType;
+  ownerLabel?: string;
+  serviceRadiusKm?: number;
 };

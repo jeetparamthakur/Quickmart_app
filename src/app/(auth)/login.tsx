@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-na
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { StatusBar } from 'expo-status-bar';
 import { Button } from '@/components/ui';
 import { AuthEnter, BrandMark, PhoneField, ShakeView } from '@/components/auth';
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   safe: { flex: 1 },
   inner: { flex: 1, paddingHorizontal: 24 },
-  header: { marginTop: 36, marginBottom: 36, gap: 20 },
+  header: { marginTop: 28, marginBottom: 28, gap: 16 },
   title: { marginTop: 4 },
   form: { flex: 1 },
   footer: { paddingBottom: 12 },

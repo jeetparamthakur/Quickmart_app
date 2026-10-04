@@ -4,14 +4,14 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { useTheme } from '@/context/ThemeContext';
 import { useCartStore } from '@/store/cartStore';
 import { formatPrice } from '@/utils/formatPrice';
 import { t } from '@/i18n';
 
 export function MiniCartBar() {
-  const { colors, typography, radius, shadows } = useTheme();
+  const { colors, typography, radius, shadows, spacing } = useTheme();
   const items = useCartStore((s) => s.items);
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const savings = items.reduce((sum, i) => {
@@ -23,7 +23,10 @@ export function MiniCartBar() {
   if (count === 0) return null;
 
   return (
-    <Animated.View entering={FadeInUp.springify().damping(16)} style={styles.wrap}>
+    <Animated.View
+      entering={FadeInUp.springify().damping(16)}
+      style={[styles.wrap, { bottom: spacing.xs }]}
+    >
       <Pressable
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -77,7 +80,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: 10,
   },
   bar: {
     flexDirection: 'row',

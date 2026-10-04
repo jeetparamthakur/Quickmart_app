@@ -4,11 +4,12 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import {
   AddressPicker,
   CheckoutEtaBanner,
   CheckoutHeader,
+  CheckoutStepIndicator,
   DeliveryNotes,
   OrderItemsStrip,
   PaymentMethodList,
@@ -20,6 +21,7 @@ import { useCartPricing } from '@/hooks/useCartPricing';
 import { useLocationStore } from '@/store/locationStore';
 import { checkoutService } from '@/services/api/checkout.service';
 import { PaymentMethod } from '@/types/cart';
+import { hasDeliveryContact } from '@/types/location';
 import { useTheme } from '@/context/ThemeContext';
 import { t } from '@/i18n';
 
@@ -28,7 +30,7 @@ export default function CheckoutScreen() {
   const cart = useCart();
   const pricing = useCartPricing();
   const { savedAddresses, selectedAddress, setSelectedAddress } = useLocationStore();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   const [instructions, setInstructions] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -51,6 +53,10 @@ export default function CheckoutScreen() {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress) return;
+    if (!hasDeliveryContact(selectedAddress)) {
+      Alert.alert(t('contactMissing'), t('invalidReceiverPhone'));
+      return;
+    }
     setLoading(true);
     try {
       const result = await checkoutService.placeOrder({
@@ -62,7 +68,15 @@ export default function CheckoutScreen() {
       });
       cart.clearCart();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.replace({ pathname: '/order-success', params: { orderId: result.orderId, total: String(result.total) } });
+      router.replace({
+        pathname: '/order-success',
+        params: {
+          orderId: result.orderId,
+          orderNumber: result.orderNumber,
+          total: String(result.total),
+          etaMinutes: String(result.estimatedDeliveryMinutes),
+        },
+      });
     } catch {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('placeOrderFailed'));
@@ -78,6 +92,7 @@ export default function CheckoutScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <CheckoutHeader itemCount={cart.itemCount} />
+      <CheckoutStepIndicator />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           style={{ flex: 1 }}
@@ -131,7 +146,7 @@ export default function CheckoutScreen() {
           total={pricing.total}
           itemCount={cart.itemCount}
           loading={loading}
-          disabled={!selectedAddress}
+          disabled={!selectedAddress || !hasDeliveryContact(selectedAddress)}
           onPlaceOrder={handlePlaceOrder}
         />
       </Animated.View>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, TextInput, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { CartGroupSection } from '@/components/cart/CartGroup';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { useCart } from '@/hooks/useCart';
@@ -24,11 +24,6 @@ export default function CartScreen() {
   const pricing = useCartPricing();
   const [couponInput, setCouponInput] = useState('');
   const [couponMsg, setCouponMsg] = useState('');
-
-  const eta = useMemo(() => {
-    const minutes = cart.items.map((i) => i.product.sellers?.[0]?.deliveryMinutes ?? 10);
-    return minutes.length ? Math.min(...minutes) : 10;
-  }, [cart.items]);
 
   const applyCoupon = async (code?: string) => {
     const raw = (code ?? couponInput).trim();
@@ -130,18 +125,8 @@ export default function CartScreen() {
       <ScrollView
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 132 }}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
       >
-        <Animated.View
-          entering={FadeInDown.duration(280)}
-          style={[styles.etaBanner, { backgroundColor: colors.primaryLight, borderRadius: radius.md }]}
-        >
-          <Ionicons name="flash" size={16} color={colors.primary} />
-          <Text style={[typography.label, { color: colors.primary, flex: 1 }]}>
-            {t('deliveryInMinutes', { minutes: eta })}
-          </Text>
-        </Animated.View>
-
         {cart.groups.map((group, i) => (
           <Animated.View key={group.storeId} entering={FadeInDown.delay(60 * i).duration(280)}>
             <CartGroupSection
@@ -208,20 +193,23 @@ export default function CartScreen() {
                   <Text style={[typography.caption, { color: '#FFF', fontWeight: '800' }]}>{t('apply')}</Text>
                 </Pressable>
               </View>
-              <View style={styles.chips}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
                 {SUGGESTED_COUPONS.map((code) => (
                   <Pressable
                     key={code}
                     onPress={() => applyCoupon(code)}
                     style={[
                       styles.chip,
-                      { borderColor: colors.border, backgroundColor: colors.background },
+                      {
+                        borderColor: couponInput.toUpperCase() === code ? colors.primary : colors.border,
+                        backgroundColor: couponInput.toUpperCase() === code ? colors.primaryLight : colors.background,
+                      },
                     ]}
                   >
                     <Text style={[typography.caption, { color: colors.primary, fontWeight: '700' }]}>{code}</Text>
                   </Pressable>
                 ))}
-              </View>
+              </ScrollView>
             </>
           )}
           {couponMsg && !cart.couponCode ? (
@@ -305,14 +293,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  etaBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
-  },
   couponCard: { borderWidth: StyleSheet.hairlineWidth },
   couponHead: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
   couponRow: {
@@ -323,7 +303,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   applyBtn: { paddingHorizontal: 14, paddingVertical: 8 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  chips: { flexDirection: 'row', gap: 8, marginTop: 12, paddingRight: 8 },
   chip: {
     paddingHorizontal: 10,
     paddingVertical: 6,

@@ -36,7 +36,7 @@ export const StoreCard = memo(function StoreCard({ store, width }: Props) {
         <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm, flexWrap: 'wrap' }}>
           {!store.isOpen && <Badge label="Closed" variant="error" />}
           {store.offer && <Badge label={store.offer} variant="accent" />}
-          {store.deliveryFee === 0 ? (
+          {(store.deliveryFee ?? 0) === 0 ? (
             <Badge label="Free delivery" variant="success" />
           ) : (
             <Badge label={`Delivery ${formatPrice(store.deliveryFee)}`} variant="neutral" />

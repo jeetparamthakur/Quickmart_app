@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { USE_MOCK } from '@/constants/api';
-import { cartApi } from '@/services/api/cart-api.service';
+import { canSyncCartToBackend, cartApi } from '@/services/api/cart-api.service';
 import { cartService } from '@/services/api/cart.service';
 import { useCartStore } from '@/store/cartStore';
 
@@ -53,7 +53,7 @@ export function useCartPricing(): CartPricing {
   );
 
   useEffect(() => {
-    if (USE_MOCK || items.length === 0) {
+    if (USE_MOCK || items.length === 0 || !canSyncCartToBackend(items)) {
       setRemote(null);
       setLoading(false);
       return;

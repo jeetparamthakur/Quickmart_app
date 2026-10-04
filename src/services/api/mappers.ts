@@ -7,38 +7,92 @@ export function mapBackendProduct(sp: Record<string, unknown>): Product {
   const mp = sp.masterProduct as Record<string, unknown> | undefined;
   const store = sp.store as Record<string, unknown> | undefined;
   const inv = sp.inventory as Record<string, unknown> | undefined;
+  const attrs = (mp?.attributes as Record<string, unknown> | undefined) ?? {};
   const qty = (inv?.quantityAvailable as number) ?? 0;
   const reserved = (inv?.quantityReserved as number) ?? 0;
+  const id = sp.id as string;
+  const image = 'https://picsum.photos/seed/' + id + '/400/400';
+  const topProductType = sp.productType as string | undefined;
+  const productType =
+    topProductType === 'food' || attrs.productType === 'food' ? 'food' : 'retail';
+
   return {
-    id: sp.id as string,
-    name: (sp.title as string) ?? (mp?.name as string) ?? '',
+    id,
+    name: (mp?.name as string) ?? (sp.title as string) ?? '',
     brand: (mp?.brand as string) ?? '',
     price: parseFloat(sp.sellingPrice as string),
     originalPrice: parseFloat(sp.mrp as string),
-    image: 'https://picsum.photos/seed/' + sp.id + '/400/400',
+    image,
+    images: [image],
     rating: 4.5,
     reviewCount: 0,
     unit: (mp?.baseUnit as string) ?? 'pc',
+    description: (mp?.description as string) ?? '',
+    specifications: {},
     inStock: qty - reserved > 0,
     categoryId: (mp?.categoryId as string) ?? '',
     storeId: (sp.storeId as string) ?? '',
     storeName: (store?.name as string) ?? 'Store',
     tags: [],
+    productType,
+    isVeg: typeof attrs.isVeg === 'boolean' ? attrs.isVeg : undefined,
+    prepTimeMinutes:
+      typeof attrs.prepTimeMinutes === 'number' ? attrs.prepTimeMinutes : undefined,
   };
 }
 
 export function mapBackendStore(s: Record<string, unknown>): Store {
+  const id = s.id as string;
+  const details = (s.details as Record<string, unknown> | undefined) ?? {};
+  const lat =
+    s.lat != null
+      ? parseFloat(String(s.lat))
+      : typeof details.latitude === 'number'
+        ? details.latitude
+        : 0;
+  const lng =
+    s.lng != null
+      ? parseFloat(String(s.lng))
+      : typeof details.longitude === 'number'
+        ? details.longitude
+        : 0;
+
+  const deliveryMinutes =
+    typeof details.deliveryMinutes === 'number' ? details.deliveryMinutes : 25;
+
   return {
-    id: s.id as string,
+    id,
     name: s.name as string,
-    image: 'https://picsum.photos/seed/store-' + s.id + '/400/300',
+    image: `https://picsum.photos/seed/store-${id}/400/300`,
+    logo: `https://picsum.photos/seed/logo-${id}/80/80`,
     rating: 4.5,
     reviewCount: 0,
-    distanceKm: 1.2,
-    deliveryMinutes: 25,
+    distanceKm: typeof s.distanceKm === 'number' ? s.distanceKm : 1.2,
+    deliveryMinutes,
+    deliveryFee: 0,
     categories: [],
-    isOpen: s.status === 'ACTIVE',
-    address: (s.address as string) ?? '',
+    isOpen: s.status === 'ACTIVE' || s.status === undefined,
+    latitude: lat,
+    longitude: lng,
+    partnerType: (s.partnerType as Store['partnerType']) ?? 'STORE',
+    ownerLabel: s.ownerLabel as string | undefined,
+    serviceRadiusKm:
+      s.serviceRadiusKm != null ? parseFloat(String(s.serviceRadiusKm)) : undefined,
+  };
+}
+
+export function mapBackendNearbyStore(s: Record<string, unknown>): Store {
+  const base = mapBackendStore(s);
+  return {
+    ...base,
+    distanceKm: Number(s.distanceKm ?? base.distanceKm),
+    latitude: Number(s.latitude ?? base.latitude),
+    longitude: Number(s.longitude ?? base.longitude),
+    deliveryMinutes:
+      typeof s.deliveryMinutes === 'number' ? s.deliveryMinutes : base.deliveryMinutes,
+    partnerType: (s.partnerType as Store['partnerType']) ?? base.partnerType,
+    ownerLabel: s.ownerLabel as string | undefined,
+    serviceRadiusKm: Number(s.serviceRadiusKm ?? base.serviceRadiusKm ?? 5),
   };
 }
 
@@ -49,7 +103,7 @@ export function mapBackendCategory(c: Record<string, unknown>): Category {
     slug: c.slug as string,
     icon: '🛒',
     image: 'https://picsum.photos/seed/cat-' + c.id + '/200/200',
-    productCount: 0,
+    color: '#E8F5E9',
   };
 }
 

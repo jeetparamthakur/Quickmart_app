@@ -25,6 +25,19 @@ export type ApplyCouponResult = {
   preview?: BackendCartPreview | null;
 };
 
+const SELLER_PRODUCT_UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Seed/demo catalog IDs are not persisted on the backend cart. */
+export function canSyncCartToBackend(items: CartItem[]): boolean {
+  return items.some(
+    (item) =>
+      SELLER_PRODUCT_UUID.test(item.productId) &&
+      !item.productId.startsWith('aaaaaaa0-') &&
+      item.quantity > 0,
+  );
+}
+
 export const cartApi = {
   async getCart() {
     if (USE_MOCK) return null;
@@ -80,10 +93,9 @@ export const cartApi = {
 
   async syncItems(items: CartItem[]) {
     if (USE_MOCK) return;
-    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     const syncable = items.filter(
       (item) =>
-        uuid.test(item.productId) &&
+        SELLER_PRODUCT_UUID.test(item.productId) &&
         !item.productId.startsWith('aaaaaaa0-') &&
         item.quantity > 0,
     );

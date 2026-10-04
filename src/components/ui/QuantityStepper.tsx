@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { useTheme } from '@/context/ThemeContext';
 
 type Props = {
@@ -44,6 +44,8 @@ export function QuantityStepper({
         onPress={handleIncrease}
         disabled={disabled}
         activeOpacity={0.85}
+        accessibilityRole="button"
+        accessibilityLabel="Add to cart"
         style={[
           styles.addBtn,
           {
@@ -51,8 +53,8 @@ export function QuantityStepper({
             borderRadius: isOverlay ? 10 : radius.sm,
             paddingHorizontal: isOverlay ? 14 : isSmall ? spacing.sm : spacing.md,
             paddingVertical: isOverlay ? 6 : isSmall ? 4 : spacing.sm,
-            borderWidth: isOverlay ? 2 : 0,
-            borderColor: colors.primary,
+            borderWidth: isOverlay ? 2.5 : 0,
+            borderColor: colors.primaryDark,
             opacity: disabled ? 0.45 : 1,
           },
           isOverlay ? styles.overlayShadow : null,
@@ -87,7 +89,13 @@ export function QuantityStepper({
         },
       ]}
     >
-      <TouchableOpacity onPress={handleDecrease} style={styles.stepBtn} disabled={disabled}>
+      <TouchableOpacity
+        onPress={handleDecrease}
+        style={styles.stepBtn}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityLabel="Decrease quantity"
+      >
         <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>−</Text>
       </TouchableOpacity>
       <Text
@@ -98,7 +106,13 @@ export function QuantityStepper({
       >
         {quantity}
       </Text>
-      <TouchableOpacity onPress={handleIncrease} style={styles.stepBtn} disabled={disabled}>
+      <TouchableOpacity
+        onPress={handleIncrease}
+        style={styles.stepBtn}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityLabel="Increase quantity"
+      >
         <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>+</Text>
       </TouchableOpacity>
     </View>

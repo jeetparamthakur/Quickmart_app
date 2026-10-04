@@ -35,10 +35,14 @@ export type Product = {
   inStock: boolean;
   sellers?: ProductSeller[];
   tags?: string[];
+  productType?: 'food' | 'retail';
+  isVeg?: boolean;
+  prepTimeMinutes?: number;
 };
 
 export type ProductSection = {
   id: string;
   title: string;
+  subtitle?: string;
   products: Product[];
 };

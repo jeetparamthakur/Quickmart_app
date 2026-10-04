@@ -1,6 +1,6 @@
 import { apiRequest } from './client';
 import { simulateDelay } from './utils';
-import { products, stores, trendingSearches } from '../mock/data';
+import { products, foodProducts, stores, trendingSearches } from '../mock/data';
 import { Product } from '@/types/product';
 import { Store } from '@/types/store';
 import { USE_MOCK } from '@/constants/api';
@@ -52,6 +52,35 @@ export const productService = {
     }
     const data = await apiRequest<Record<string, unknown>[]>(`/stores/${storeId}/products`);
     return data.map(mapBackendProduct);
+  },
+
+  async getRetailByStore(storeId: string): Promise<Product[]> {
+    if (USE_MOCK) {
+      await simulateDelay();
+      return products.filter(
+        (p) => p.storeId === storeId && (p.productType ?? 'retail') !== 'food',
+      );
+    }
+    const data = await apiRequest<Record<string, unknown>[]>(
+      `/stores/${storeId}/products?productType=retail`,
+    );
+    return data.map(mapBackendProduct);
+  },
+
+  async listFoodByStores(storeIds: string[]): Promise<Product[]> {
+    if (!storeIds.length) return [];
+    if (USE_MOCK) {
+      await simulateDelay();
+      const set = new Set(storeIds);
+      return foodProducts.filter((p) => set.has(p.storeId));
+    }
+    const params = new URLSearchParams({
+      productType: 'food',
+      limit: '80',
+      storeIds: storeIds.join(','),
+    });
+    const res = await apiRequest<{ data: Record<string, unknown>[] }>(`/products?${params}`);
+    return res.data.map(mapBackendProduct);
   },
 
   async getSimilar(productId: string): Promise<Product[]> {

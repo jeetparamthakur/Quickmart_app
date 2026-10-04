@@ -1,5 +1,9 @@
 export { Button } from './Button';
 export { Card } from './Card';
+export { PressableScale } from './PressableScale';
+export { ScreenHeader } from './ScreenHeader';
+export { ListRow } from './ListRow';
+export { IconButton } from './IconButton';
 export { Skeleton, ShimmerCard } from './Skeleton';
 export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';

@@ -19,23 +19,27 @@ export const categories: Category[] = [
   { id: 'cat-12', name: 'Local Products', slug: 'local-products', icon: '🏪', image: 'https://picsum.photos/seed/local/200/200', color: '#C8E6C9' },
 ];
 
+const groceryDefaults = { partnerType: 'STORE' as const, serviceRadiusKm: 8 };
+
 export const stores: Store[] = [
-  { id: 'store-1', name: 'ABC Supermarket', image: 'https://picsum.photos/seed/store1/400/200', logo: 'https://picsum.photos/seed/logo1/80/80', rating: 4.5, reviewCount: 2340, deliveryMinutes: 12, distanceKm: 1.2, deliveryFee: 0, offer: 'Free delivery', isOpen: true, categories: ['grocery', 'dairy', 'snacks'], latitude: 28.6139, longitude: 77.209 },
-  { id: 'store-2', name: 'Fresh Mart', image: 'https://picsum.photos/seed/store2/400/200', logo: 'https://picsum.photos/seed/logo2/80/80', rating: 4.3, reviewCount: 1820, deliveryMinutes: 15, distanceKm: 1.8, deliveryFee: 20, offer: '20% OFF', isOpen: true, categories: ['fruits-vegetables', 'grocery'], latitude: 28.615, longitude: 77.21 },
-  { id: 'store-3', name: 'Rahul Store', image: 'https://picsum.photos/seed/store3/400/200', logo: 'https://picsum.photos/seed/logo3/80/80', rating: 4.7, reviewCount: 890, deliveryMinutes: 18, distanceKm: 2.1, deliveryFee: 15, isOpen: true, categories: ['electronics', 'fashion'], latitude: 28.612, longitude: 77.205 },
-  { id: 'store-4', name: 'Aman Seller', image: 'https://picsum.photos/seed/store4/400/200', logo: 'https://picsum.photos/seed/logo4/80/80', rating: 4.8, reviewCount: 456, deliveryMinutes: 25, distanceKm: 3.0, deliveryFee: 25, offer: 'Handmade', isOpen: true, categories: ['local-products', 'home-essentials'], latitude: 28.618, longitude: 77.215 },
-  { id: 'store-5', name: 'MedPlus Pharmacy', image: 'https://picsum.photos/seed/store5/400/200', logo: 'https://picsum.photos/seed/logo5/80/80', rating: 4.6, reviewCount: 3200, deliveryMinutes: 20, distanceKm: 2.5, deliveryFee: 0, isOpen: true, categories: ['pharmacy'], latitude: 28.61, longitude: 77.2 },
-  { id: 'store-6', name: 'Beauty Hub', image: 'https://picsum.photos/seed/store6/400/200', logo: 'https://picsum.photos/seed/logo6/80/80', rating: 4.4, reviewCount: 670, deliveryMinutes: 22, distanceKm: 2.8, deliveryFee: 30, isOpen: false, categories: ['beauty'], latitude: 28.62, longitude: 77.22 },
-  { id: 'store-7', name: 'Quick Bites', image: 'https://picsum.photos/seed/store7/400/200', logo: 'https://picsum.photos/seed/logo7/80/80', rating: 4.2, reviewCount: 1100, deliveryMinutes: 10, distanceKm: 0.8, deliveryFee: 10, offer: 'Flat 50% OFF', isOpen: true, categories: ['snacks', 'beverages'], latitude: 28.614, longitude: 77.208 },
-  { id: 'store-8', name: 'Tech Zone', image: 'https://picsum.photos/seed/store8/400/200', logo: 'https://picsum.photos/seed/logo8/80/80', rating: 4.1, reviewCount: 540, deliveryMinutes: 30, distanceKm: 3.5, deliveryFee: 40, isOpen: true, categories: ['electronics'], latitude: 28.625, longitude: 77.225 },
+  { id: 'store-1', name: 'ABC Supermarket', image: 'https://picsum.photos/seed/store1/400/200', logo: 'https://picsum.photos/seed/logo1/80/80', rating: 4.5, reviewCount: 2340, deliveryMinutes: 12, distanceKm: 1.2, deliveryFee: 0, offer: 'Free delivery', isOpen: true, categories: ['grocery', 'dairy', 'snacks'], latitude: 28.6139, longitude: 77.209, ...groceryDefaults },
+  { id: 'store-2', name: 'Fresh Mart', image: 'https://picsum.photos/seed/store2/400/200', logo: 'https://picsum.photos/seed/logo2/80/80', rating: 4.3, reviewCount: 1820, deliveryMinutes: 15, distanceKm: 1.8, deliveryFee: 20, offer: '20% OFF', isOpen: true, categories: ['fruits-vegetables', 'grocery'], latitude: 28.615, longitude: 77.21, ...groceryDefaults },
+  { id: 'store-3', name: 'Rahul Store', image: 'https://picsum.photos/seed/store3/400/200', logo: 'https://picsum.photos/seed/logo3/80/80', rating: 4.7, reviewCount: 890, deliveryMinutes: 18, distanceKm: 2.1, deliveryFee: 15, isOpen: true, categories: ['electronics', 'fashion'], latitude: 28.612, longitude: 77.205, ...groceryDefaults },
+  { id: 'store-4', name: 'Aman Seller', image: 'https://picsum.photos/seed/store4/400/200', logo: 'https://picsum.photos/seed/logo4/80/80', rating: 4.8, reviewCount: 456, deliveryMinutes: 25, distanceKm: 3.0, deliveryFee: 25, offer: 'Handmade', isOpen: true, categories: ['local-products', 'home-essentials'], latitude: 28.618, longitude: 77.215, ...groceryDefaults },
+  { id: 'store-5', name: 'MedPlus Pharmacy', image: 'https://picsum.photos/seed/store5/400/200', logo: 'https://picsum.photos/seed/logo5/80/80', rating: 4.6, reviewCount: 3200, deliveryMinutes: 20, distanceKm: 2.5, deliveryFee: 0, isOpen: true, categories: ['pharmacy'], latitude: 28.61, longitude: 77.2, ...groceryDefaults },
+  { id: 'store-6', name: 'Beauty Hub', image: 'https://picsum.photos/seed/store6/400/200', logo: 'https://picsum.photos/seed/logo6/80/80', rating: 4.4, reviewCount: 670, deliveryMinutes: 22, distanceKm: 2.8, deliveryFee: 30, isOpen: false, categories: ['beauty'], latitude: 28.62, longitude: 77.22, ...groceryDefaults },
+  { id: 'store-8', name: 'Tech Zone', image: 'https://picsum.photos/seed/store8/400/200', logo: 'https://picsum.photos/seed/logo8/80/80', rating: 4.1, reviewCount: 540, deliveryMinutes: 30, distanceKm: 3.5, deliveryFee: 40, isOpen: true, categories: ['electronics'], latitude: 28.625, longitude: 77.225, ...groceryDefaults },
+  { id: 'food-1', name: 'Spice Route Kitchen', ownerLabel: 'Spice Route Kitchen', image: 'https://picsum.photos/seed/food1/400/200', logo: 'https://picsum.photos/seed/foodlogo1/80/80', rating: 4.6, reviewCount: 2100, deliveryMinutes: 28, distanceKm: 1.0, deliveryFee: 15, offer: '20% off', isOpen: true, categories: ['food'], latitude: 28.6142, longitude: 77.2095, partnerType: 'FOOD_STORE', serviceRadiusKm: 6 },
+  { id: 'food-2', name: 'Urban Slice', ownerLabel: 'Urban Slice', image: 'https://picsum.photos/seed/food2/400/200', logo: 'https://picsum.photos/seed/foodlogo2/80/80', rating: 4.4, reviewCount: 980, deliveryMinutes: 22, distanceKm: 1.6, deliveryFee: 10, isOpen: true, categories: ['food'], latitude: 28.616, longitude: 77.212, partnerType: 'FOOD_STORE', serviceRadiusKm: 5 },
+  { id: 'food-3', name: 'Green Bowl', ownerLabel: 'Green Bowl', image: 'https://picsum.photos/seed/food3/400/200', logo: 'https://picsum.photos/seed/foodlogo3/80/80', rating: 4.8, reviewCount: 640, deliveryMinutes: 18, distanceKm: 2.2, deliveryFee: 0, offer: 'Healthy picks', isOpen: true, categories: ['food'], latitude: 28.611, longitude: 77.204, partnerType: 'FOOD_STORE', serviceRadiusKm: 4 },
 ];
 
 const productTemplates = [
   { name: 'Amul Taaza Milk', brand: 'Amul', categoryId: 'cat-3', unit: '500 ml', price: 28, originalPrice: 30, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['bestseller', 'daily'] },
   { name: 'Britannia Bread', brand: 'Britannia', categoryId: 'cat-1', unit: '400 g', price: 45, originalPrice: 50, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['daily'] },
   { name: 'Fresh Bananas', brand: 'Fresh Farm', categoryId: 'cat-2', unit: '1 kg', price: 49, originalPrice: 60, storeId: 'store-2', storeName: 'Fresh Mart', tags: ['popular'] },
-  { name: 'Lay\'s Classic Salted', brand: 'Lay\'s', categoryId: 'cat-4', unit: '52 g', price: 20, storeId: 'store-7', storeName: 'Quick Bites', tags: ['trending'] },
-  { name: 'Coca Cola', brand: 'Coca Cola', categoryId: 'cat-5', unit: '750 ml', price: 40, originalPrice: 45, storeId: 'store-7', storeName: 'Quick Bites', tags: ['bestseller'] },
+  { name: 'Lay\'s Classic Salted', brand: 'Lay\'s', categoryId: 'cat-4', unit: '52 g', price: 20, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['trending'] },
+  { name: 'Coca Cola', brand: 'Coca Cola', categoryId: 'cat-5', unit: '750 ml', price: 40, originalPrice: 45, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['bestseller'] },
   { name: 'Samsung USB-C Cable', brand: 'Samsung', categoryId: 'cat-6', unit: '1 pc', price: 299, originalPrice: 499, storeId: 'store-3', storeName: 'Rahul Store', tags: ['trending'] },
   { name: 'Mobile Cover iPhone 15', brand: 'Spigen', categoryId: 'cat-6', unit: '1 pc', price: 599, originalPrice: 899, storeId: 'store-3', storeName: 'Rahul Store', tags: ['popular'] },
   { name: 'Lakme Face Wash', brand: 'Lakme', categoryId: 'cat-7', unit: '100 g', price: 199, originalPrice: 249, storeId: 'store-6', storeName: 'Beauty Hub', tags: [] },
@@ -47,8 +51,8 @@ const productTemplates = [
   { name: 'Basmati Rice', brand: 'India Gate', categoryId: 'cat-1', unit: '5 kg', price: 599, originalPrice: 699, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['daily', 'bestseller'] },
   { name: 'Tomatoes', brand: 'Fresh Farm', categoryId: 'cat-2', unit: '500 g', price: 25, storeId: 'store-2', storeName: 'Fresh Mart', tags: ['daily'] },
   { name: 'Curd', brand: 'Mother Dairy', categoryId: 'cat-3', unit: '400 g', price: 35, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['daily'] },
-  { name: 'Kurkure Masala Munch', brand: 'Kurkure', categoryId: 'cat-4', unit: '90 g', price: 20, storeId: 'store-7', storeName: 'Quick Bites', tags: ['popular'] },
-  { name: 'Red Bull Energy', brand: 'Red Bull', categoryId: 'cat-5', unit: '250 ml', price: 125, storeId: 'store-7', storeName: 'Quick Bites', tags: [] },
+  { name: 'Kurkure Masala Munch', brand: 'Kurkure', categoryId: 'cat-4', unit: '90 g', price: 20, storeId: 'store-1', storeName: 'ABC Supermarket', tags: ['popular'] },
+  { name: 'Red Bull Energy', brand: 'Red Bull', categoryId: 'cat-5', unit: '250 ml', price: 125, storeId: 'store-1', storeName: 'ABC Supermarket', tags: [] },
   { name: 'Boat Rockerz 450', brand: 'Boat', categoryId: 'cat-6', unit: '1 pc', price: 1499, originalPrice: 2499, storeId: 'store-8', storeName: 'Tech Zone', tags: ['trending', 'bestseller'] },
   { name: 'Maybelline Lipstick', brand: 'Maybelline', categoryId: 'cat-7', unit: '1 pc', price: 349, originalPrice: 449, storeId: 'store-6', storeName: 'Beauty Hub', tags: [] },
 ];
@@ -114,7 +118,7 @@ function buildProducts(): Product[] {
       p.sellers = [
         { storeId: p.storeId, storeName: p.storeName, price: p.price, originalPrice: p.originalPrice, deliveryMinutes: 12, inStock: true },
         { storeId: 'store-2', storeName: 'Fresh Mart', price: p.price + 5, deliveryMinutes: 18, inStock: true },
-        { storeId: 'store-7', storeName: 'Quick Bites', price: p.price - 2, originalPrice: p.originalPrice, deliveryMinutes: 10, inStock: true },
+        { storeId: 'store-1', storeName: 'ABC Supermarket', price: p.price - 2, originalPrice: p.originalPrice, deliveryMinutes: 10, inStock: true },
       ].sort((a, b) => a.price - b.price);
     }
   });
@@ -123,6 +127,45 @@ function buildProducts(): Product[] {
 }
 
 export const products = buildProducts();
+
+const foodTemplates = [
+  { name: 'Paneer Butter Masala', storeId: 'food-1', storeName: 'Spice Route Kitchen', price: 189, originalPrice: 220, isVeg: true, prepTimeMinutes: 25 },
+  { name: 'Chicken Biryani', storeId: 'food-1', storeName: 'Spice Route Kitchen', price: 249, originalPrice: 280, isVeg: false, prepTimeMinutes: 30 },
+  { name: 'Dal Makhani & Rice', storeId: 'food-1', storeName: 'Spice Route Kitchen', price: 169, isVeg: true, prepTimeMinutes: 22 },
+  { name: 'Margherita Pizza', storeId: 'food-2', storeName: 'Urban Slice', price: 279, originalPrice: 320, isVeg: true, prepTimeMinutes: 20 },
+  { name: 'Pepperoni Pizza', storeId: 'food-2', storeName: 'Urban Slice', price: 319, originalPrice: 360, isVeg: false, prepTimeMinutes: 22 },
+  { name: 'Garlic Bread', storeId: 'food-2', storeName: 'Urban Slice', price: 99, isVeg: true, prepTimeMinutes: 12 },
+  { name: 'Quinoa Buddha Bowl', storeId: 'food-3', storeName: 'Green Bowl', price: 199, isVeg: true, prepTimeMinutes: 15 },
+  { name: 'Grilled Chicken Salad', storeId: 'food-3', storeName: 'Green Bowl', price: 229, isVeg: false, prepTimeMinutes: 18 },
+  { name: 'Avocado Toast', storeId: 'food-3', storeName: 'Green Bowl', price: 149, isVeg: true, prepTimeMinutes: 10 },
+];
+
+export const foodProducts: Product[] = foodTemplates.map((tpl, i) => {
+  const id = `food-prod-${i + 1}`;
+  const img = `https://picsum.photos/seed/food${i + 1}/300/300`;
+  return {
+    id,
+    name: tpl.name,
+    brand: tpl.storeName,
+    categoryId: 'cat-food',
+    image: img,
+    images: [img],
+    price: tpl.price,
+    originalPrice: tpl.originalPrice,
+    unit: 'serving',
+    rating: 4.2 + (i % 5) * 0.1,
+    reviewCount: 80 + i * 20,
+    description: `${tpl.name} from ${tpl.storeName}`,
+    specifications: {},
+    storeId: tpl.storeId,
+    storeName: tpl.storeName,
+    inStock: true,
+    productType: 'food',
+    isVeg: tpl.isVeg,
+    prepTimeMinutes: tpl.prepTimeMinutes,
+    tags: tpl.prepTimeMinutes <= 15 ? ['fast'] : [],
+  };
+});
 
 export const banners: Banner[] = [
   { id: 'banner-1', title: 'Flat 50% OFF', subtitle: 'On first order', image: 'https://picsum.photos/seed/banner1/800/300', backgroundColor: '#2E7D32', targetType: 'category', targetId: 'cat-1', startDate: '2026-01-01', endDate: '2026-12-31', position: 1 },
@@ -134,9 +177,42 @@ export const banners: Banner[] = [
 ];
 
 export const addresses: Address[] = [
-  { id: 'addr-1', label: 'Home', line1: '42, Green Park Extension', line2: 'Near Metro Station', city: 'New Delhi', pincode: '110016', latitude: 28.5672, longitude: 77.2101, isDefault: true },
-  { id: 'addr-2', label: 'Work', line1: 'Cyber Hub, Tower B', line2: 'DLF Phase 3', city: 'Gurugram', pincode: '122002', latitude: 28.4946, longitude: 77.0889 },
-  { id: 'addr-3', label: 'Other', line1: '123, Saket Main Market', city: 'New Delhi', pincode: '110017', latitude: 28.5244, longitude: 77.2066 },
+  {
+    id: 'addr-1',
+    label: 'Home',
+    line1: '42, Green Park Extension',
+    line2: 'Near Metro Station',
+    city: 'New Delhi',
+    pincode: '110016',
+    latitude: 28.5672,
+    longitude: 77.2101,
+    isDefault: true,
+    receiverName: 'Customer',
+    receiverPhone: '9876543210',
+  },
+  {
+    id: 'addr-2',
+    label: 'Work',
+    line1: 'Cyber Hub, Tower B',
+    line2: 'DLF Phase 3',
+    city: 'Gurugram',
+    pincode: '122002',
+    latitude: 28.4946,
+    longitude: 77.0889,
+    receiverName: 'Customer',
+    receiverPhone: '9876543210',
+  },
+  {
+    id: 'addr-3',
+    label: 'Other',
+    line1: '123, Saket Main Market',
+    city: 'New Delhi',
+    pincode: '110017',
+    latitude: 28.5244,
+    longitude: 77.2066,
+    receiverName: 'Rahul',
+    receiverPhone: '9123456789',
+  },
 ];
 
 export const trendingSearches = [

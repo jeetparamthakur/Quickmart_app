@@ -3,6 +3,7 @@ import { simulateDelay } from './utils';
 import { CartItem, PaymentMethod } from '@/types/cart';
 import { USE_MOCK } from '@/constants/api';
 import { cartApi, couponErrorMessage } from './cart-api.service';
+import { localOrders } from '@/services/localOrders';
 
 export type CheckoutPayload = {
   items: CartItem[];
@@ -14,6 +15,7 @@ export type CheckoutPayload = {
 
 export type CheckoutResult = {
   orderId: string;
+  orderNumber: string;
   total: number;
   estimatedDeliveryMinutes: number;
 };
@@ -40,15 +42,18 @@ function shouldUseLocalCheckout(error: unknown) {
   return error.appError.code === 'CART_EMPTY' || error.appError.code === 'PRODUCT_NOT_FOUND';
 }
 
-function localCheckout(payload: CheckoutPayload): CheckoutResult {
+async function localCheckout(payload: CheckoutPayload): Promise<CheckoutResult> {
   const subtotal = payload.items.reduce((s, i) => s + i.price * i.quantity, 0);
   let total = subtotal + 25 + Math.round(subtotal * 0.05) + Math.round(subtotal * 0.18);
   if (payload.couponCode) {
     const { discount } = checkoutService.validateCouponLocal(payload.couponCode, subtotal);
     total -= discount;
   }
+  const orderId = 'ORD-' + Date.now().toString().slice(-8);
+  await localOrders.append({ orderId, total: Math.round(total), items: payload.items });
   return {
-    orderId: 'ORD-' + Date.now().toString().slice(-8),
+    orderId,
+    orderNumber: orderId,
     total: Math.round(total),
     estimatedDeliveryMinutes: 25,
   };
@@ -107,7 +112,7 @@ export const checkoutService = {
   async placeOrder(payload: CheckoutPayload): Promise<CheckoutResult> {
     if (USE_MOCK || !canUseBackendCart(payload.items)) {
       await simulateDelay(800, 1500);
-      return localCheckout(payload);
+      return await localCheckout(payload);
     }
 
     try {
@@ -132,14 +137,15 @@ export const checkoutService = {
       const parent = checkout.parentOrder ?? checkout.parent;
       const total = preview?.pricing.totalPayable ?? checkout.pricing?.totalPayable ?? 0;
       return {
-        orderId: parent?.orderNumber ?? parent?.id ?? '',
+        orderId: parent?.id ?? '',
+        orderNumber: parent?.orderNumber ?? parent?.id ?? '',
         total: Math.round(total),
         estimatedDeliveryMinutes: 30,
       };
     } catch (error) {
       if (shouldUseLocalCheckout(error)) {
         await simulateDelay(400, 800);
-        return localCheckout(payload);
+        return await localCheckout(payload);
       }
       throw error;
     }

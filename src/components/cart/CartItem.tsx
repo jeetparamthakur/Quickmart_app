@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { CartItem } from '@/types/cart';
 import { useTheme } from '@/context/ThemeContext';
 import { QuantityStepper } from '@/components/ui';
@@ -60,7 +60,7 @@ export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props)
             {
               backgroundColor: colors.surface,
               paddingHorizontal: spacing.md,
-              paddingVertical: spacing.md,
+              paddingVertical: spacing.sm,
               borderBottomColor: colors.border,
               borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
             },

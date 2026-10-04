@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { CartItem } from '@/types/cart';
 import { useTheme } from '@/context/ThemeContext';
 import { t } from '@/i18n';

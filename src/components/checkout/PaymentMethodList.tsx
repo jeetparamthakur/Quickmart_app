@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { PaymentMethod } from '@/types/cart';
 import { useTheme } from '@/context/ThemeContext';
 import { t } from '@/i18n';
@@ -12,15 +12,10 @@ type Props = {
 
 const METHODS: {
   id: PaymentMethod;
-  label: 'payUpi' | 'payCard' | 'payWallet' | 'payCod';
-  hint: 'payUpiHint' | 'payCardHint' | 'payWalletHint' | 'payCodHint';
+  label: 'payCod';
+  hint: 'payCodHint';
   icon: keyof typeof Ionicons.glyphMap;
-}[] = [
-  { id: 'upi', label: 'payUpi', hint: 'payUpiHint', icon: 'phone-portrait-outline' },
-  { id: 'card', label: 'payCard', hint: 'payCardHint', icon: 'card-outline' },
-  { id: 'wallet', label: 'payWallet', hint: 'payWalletHint', icon: 'wallet-outline' },
-  { id: 'cod', label: 'payCod', hint: 'payCodHint', icon: 'cash-outline' },
-];
+}[] = [{ id: 'cod', label: 'payCod', hint: 'payCodHint', icon: 'cash-outline' }];
 
 export function PaymentMethodList({ value, onChange }: Props) {
   const { colors, spacing, typography, radius } = useTheme();

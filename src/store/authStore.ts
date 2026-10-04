@@ -14,6 +14,7 @@ type AuthState = {
   isAuthenticated: boolean;
   isHydrated: boolean;
   setPhone: (phone: string) => void;
+  updateUser: (patch: Partial<User>) => void;
   login: (token: string, user: User, refreshToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   setHydrated: () => void;
@@ -29,6 +30,10 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isHydrated: false,
       setPhone: (phone) => set({ phone }),
+      updateUser: (patch) =>
+        set((s) => ({
+          user: s.user ? { ...s.user, ...patch } : s.user,
+        })),
       login: async (token, user, refreshToken) => {
         await setStoredTokens(token, refreshToken);
         set({ token, user, isAuthenticated: true });

@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { useTheme } from '@/context/ThemeContext';
 import { formatPrice } from '@/utils/formatPrice';
 import { t } from '@/i18n';

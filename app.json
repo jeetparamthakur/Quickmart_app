@@ -32,7 +32,13 @@
       "expo-router",
       "expo-splash-screen",
       "expo-image",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "QuickMart needs your location to show nearby stores and delivery options."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,26 +1,39 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import type { ComponentProps } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/authStore';
 import { useTheme } from '@/context/ThemeContext';
+import { useTabScreenInsets } from '@/hooks/useTabScreenInsets';
+import { ListRow } from '@/components/ui';
 import { t } from '@/i18n';
 
-const menuItems = [
-  { icon: '📦', label: 'My Orders', screen: 'orders' },
-  { icon: '📍', label: 'Saved Addresses', screen: 'addresses' },
-  { icon: '❤️', label: 'Wishlist', screen: 'wishlist' },
-  { icon: '💳', label: 'Payment Methods', screen: 'payments' },
-  { icon: '🎟️', label: 'Coupons', screen: 'coupons' },
-  { icon: '🔔', label: 'Notification Settings', screen: 'notifications' },
-  { icon: '❓', label: 'Help & Support', screen: 'help' },
-  { icon: 'ℹ️', label: 'About', screen: 'about' },
-  { icon: '🔒', label: 'Privacy Policy', screen: 'privacy' },
-  { icon: '📄', label: 'Terms & Conditions', screen: 'terms' },
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
+
+type MenuItem = { icon: IoniconName; label: string; screen: string };
+
+const SECTIONS: { title: string; items: MenuItem[] }[] = [
+  {
+    title: 'Account',
+    items: [
+      { icon: 'person-circle-outline', label: 'My Account', screen: 'my-account' },
+      { icon: 'cube-outline', label: 'My Orders', screen: 'orders' },
+      { icon: 'location-outline', label: 'Saved Addresses', screen: 'addresses' },
+      { icon: 'heart-outline', label: 'Wishlist', screen: 'wishlist' },
+    ],
+  },
+  {
+    title: 'Preferences',
+    items: [
+      { icon: 'help-circle-outline', label: t('helpSupport'), screen: 'help' },
+    ],
+  },
 ];
 
 export default function ProfileScreen() {
-  const { colors, spacing, typography, radius, shadows } = useTheme();
-  const user = useAuthStore((s) => s.user);
+  const { colors, spacing, typography } = useTheme();
+  const { contentPaddingBottom } = useTabScreenInsets();
   const logout = useAuthStore((s) => s.logout);
 
   const handleLogout = () => {
@@ -39,36 +52,42 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      <ScrollView>
-        <View style={[styles.header, { backgroundColor: colors.primary, padding: spacing.xl }]}>
-          <View style={[styles.avatar, { backgroundColor: '#FFF' }]}>
-            <Text style={{ fontSize: 36 }}>👤</Text>
-          </View>
-          <Text style={[typography.h2, { color: '#FFF', marginTop: spacing.md }]}>{user?.name ?? 'Customer'}</Text>
-          <Text style={[typography.body, { color: 'rgba(255,255,255,0.8)' }]}>{user?.phone ?? ''}</Text>
-        </View>
+      <View style={[styles.pageHeader, { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md }]}>
+        <Text style={[typography.h2, { color: colors.text, fontWeight: '800', letterSpacing: -0.4 }]}>
+          {t('profile')}
+        </Text>
+      </View>
 
-        <View style={{ padding: spacing.lg }}>
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item.screen}
-              onPress={() => router.push(`/placeholder/${item.screen}`)}
-              style={[styles.menuItem, shadows.sm, { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.sm, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth }]}
+      <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingTop: 0, paddingBottom: contentPaddingBottom }}>
+        {SECTIONS.map((section) => (
+          <View key={section.title} style={{ marginBottom: spacing.md }}>
+            <Text
+              style={[
+                typography.caption,
+                { color: colors.textSecondary, fontWeight: '700', marginBottom: spacing.sm, marginLeft: 4 },
+              ]}
             >
-              <Text style={{ fontSize: 20 }}>{item.icon}</Text>
-              <Text style={[typography.body, { color: colors.text, flex: 1, marginLeft: spacing.md }]}>{item.label}</Text>
-              <Text style={{ color: colors.textMuted }}>›</Text>
-            </TouchableOpacity>
-          ))}
+              {section.title}
+            </Text>
+            {section.items.map((item) => (
+              <ListRow
+                key={item.screen}
+                icon={item.icon}
+                label={item.label}
+                onPress={() => {
+                  if (item.screen === 'addresses') router.push('/addresses');
+                  else if (item.screen === 'my-account') router.push('/my-account');
+                  else if (item.screen === 'wishlist') router.push('/wishlist');
+                  else if (item.screen === 'orders') router.push('/orders');
+                  else if (item.screen === 'help') router.push('/help-support');
+                  else router.push(`/placeholder/${item.screen}`);
+                }}
+              />
+            ))}
+          </View>
+        ))}
 
-          <TouchableOpacity
-            onPress={handleLogout}
-            style={[styles.menuItem, { backgroundColor: colors.errorLight, borderRadius: radius.md, padding: spacing.lg, marginTop: spacing.md }]}
-          >
-            <Text style={{ fontSize: 20 }}>🚪</Text>
-            <Text style={[typography.label, { color: colors.error, flex: 1, marginLeft: spacing.md }]}>{t('logout')}</Text>
-          </TouchableOpacity>
-        </View>
+        <ListRow icon="log-out-outline" label={t('logout')} onPress={handleLogout} destructive showChevron={false} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -76,7 +95,5 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { alignItems: 'center' },
-  avatar: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
-  menuItem: { flexDirection: 'row', alignItems: 'center' },
+  pageHeader: {},
 });

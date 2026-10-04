@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SearchBar, Skeleton, AdSlot, EmptyState } from '@/components/ui';
+import { SearchBar, Skeleton, AdSlot, EmptyState, ScreenHeader, PressableScale } from '@/components/ui';
 import { StoreCard } from '@/components/home/StoreCard';
 import { FilterSheet } from '@/components/search/FilterSheet';
 import { ProductResultList } from '@/components/search/ResultList';
@@ -11,6 +12,7 @@ import { Product } from '@/types/product';
 import { Store } from '@/types/store';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useTheme } from '@/context/ThemeContext';
+import { useTabScreenInsets } from '@/hooks/useTabScreenInsets';
 import { trendingSearches } from '@/services/mock/data';
 import { t } from '@/i18n';
 
@@ -18,6 +20,7 @@ const RECENT_KEY = 'recent-searches';
 
 export default function SearchScreen() {
   const { colors, spacing, typography, radius } = useTheme();
+  const { contentPaddingBottom } = useTabScreenInsets();
   const [query, setQuery] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -60,7 +63,8 @@ export default function SearchScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
-      <View style={{ padding: spacing.lg }}>
+      <ScreenHeader title={t('search')} />
+      <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
         <SearchBar
           value={query}
           onChangeText={setQuery}
@@ -70,15 +74,24 @@ export default function SearchScreen() {
       </View>
 
       {!showResults ? (
-        <ScrollView style={{ paddingHorizontal: spacing.lg }}>
+        <ScrollView
+          style={{ paddingHorizontal: spacing.lg }}
+          contentContainerStyle={{ paddingBottom: contentPaddingBottom }}
+        >
           {recent.length > 0 && (
             <>
               <Text style={[typography.label, { color: colors.text, marginBottom: spacing.sm }]}>Recent Searches</Text>
               <View style={styles.chips}>
                 {recent.map((r) => (
-                  <TouchableOpacity key={r} onPress={() => setQuery(r)} style={[styles.chip, { backgroundColor: colors.surfaceSecondary, borderRadius: radius.sm }]}>
-                    <Text style={[typography.bodySmall, { color: colors.text }]}>🕐 {r}</Text>
-                  </TouchableOpacity>
+                  <PressableScale
+                    key={r}
+                    onPress={() => setQuery(r)}
+                    haptic="selection"
+                    style={[styles.chip, { backgroundColor: colors.primaryLight, borderRadius: radius.full, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth }]}
+                  >
+                    <Ionicons name="time-outline" size={14} color={colors.primary} />
+                    <Text style={[typography.caption, { color: colors.text, fontWeight: '600', marginLeft: 4 }]}>{r}</Text>
+                  </PressableScale>
                 ))}
               </View>
             </>
@@ -86,9 +99,15 @@ export default function SearchScreen() {
           <Text style={[typography.label, { color: colors.text, marginTop: spacing.lg, marginBottom: spacing.sm }]}>Trending</Text>
           <View style={styles.chips}>
             {trendingSearches.map((s) => (
-              <TouchableOpacity key={s} onPress={() => setQuery(s)} style={[styles.chip, { backgroundColor: colors.primaryLight, borderRadius: radius.sm }]}>
-                <Text style={[typography.bodySmall, { color: colors.primary }]}>🔥 {s}</Text>
-              </TouchableOpacity>
+              <PressableScale
+                key={s}
+                onPress={() => setQuery(s)}
+                haptic="selection"
+                style={[styles.chip, { backgroundColor: colors.accentLight, borderRadius: radius.full }]}
+              >
+                <Ionicons name="flame-outline" size={14} color={colors.primary} />
+                <Text style={[typography.caption, { color: colors.primary, fontWeight: '700', marginLeft: 4 }]}>{s}</Text>
+              </PressableScale>
             ))}
           </View>
           {suggestions.length > 0 && query.length > 0 && (
@@ -129,14 +148,16 @@ export default function SearchScreen() {
             </View>
           ) : tab === 'products' ? (
             products.length === 0 ? (
-              <EmptyState icon="🔍" title="No products found" subtitle="Try different keywords or adjust filters" />
+              <EmptyState icon="search-outline" title="No products found" subtitle="Try different keywords or adjust filters" />
             ) : (
               <ProductResultList products={products} />
             )
           ) : stores.length === 0 ? (
-            <EmptyState icon="🏪" title="No stores found" subtitle="Try searching with a different term" />
+            <EmptyState icon="storefront-outline" title="No stores found" subtitle="Try searching with a different term" />
           ) : (
-            <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg }}>
+            <ScrollView
+              contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: contentPaddingBottom }}
+            >
               {stores.map((s) => <StoreCard key={s.id} store={s} />)}
             </ScrollView>
           )}
@@ -157,7 +178,12 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 8 },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
   tabs: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   tab: { paddingBottom: 8 },
 });

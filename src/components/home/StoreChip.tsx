@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Store } from '@/types/store';
 import { useTheme } from '@/context/ThemeContext';
+import { PressableScale } from '@/components/ui/PressableScale';
 import { t } from '@/i18n';
 
 type Props = {
@@ -14,29 +16,30 @@ export const StoreChip = memo(function StoreChip({ store }: Props) {
   const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.88}
+    <PressableScale
       onPress={() => router.push(`/store/${store.id}`)}
+      haptic="selection"
       style={[
         styles.chip,
         shadows.md,
         {
           backgroundColor: colors.surface,
           borderRadius: radius.lg,
-          borderColor: store.isOpen ? colors.border : colors.errorLight,
+          borderColor: store.isOpen ? colors.border : colors.error,
           padding: spacing.sm,
         },
       ]}
     >
       <Image source={{ uri: store.logo }} style={[styles.logo, { borderRadius: radius.md }]} contentFit="cover" />
       <View style={{ flex: 1, minWidth: 0 }}>
-        <Text style={[typography.label, { color: colors.text }]} numberOfLines={1}>
+        <Text style={[typography.label, { color: colors.text, fontWeight: '700' }]} numberOfLines={1}>
           {store.name}
         </Text>
         <View style={styles.meta}>
           <View style={[styles.eta, { backgroundColor: colors.primaryLight }]}>
-            <Text style={[typography.caption, { color: colors.primary, fontWeight: '800' }]}>
-              ⚡ {store.deliveryMinutes} {t('minutesShort')}
+            <Ionicons name="flash" size={11} color={colors.primary} />
+            <Text style={[typography.caption, { color: colors.primary, fontWeight: '800', marginLeft: 3 }]}>
+              {store.deliveryMinutes} {t('minutesShort')}
             </Text>
           </View>
           {!store.isOpen ? (
@@ -46,24 +49,34 @@ export const StoreChip = memo(function StoreChip({ store }: Props) {
               {store.offer}
             </Text>
           ) : (
-            <Text style={[typography.caption, { color: colors.textMuted }]}>⭐ {store.rating}</Text>
+            <View style={styles.rating}>
+              <Ionicons name="star" size={11} color={colors.accent} />
+              <Text style={[typography.caption, { color: colors.textMuted, marginLeft: 2 }]}>{store.rating}</Text>
+            </View>
           )}
         </View>
       </View>
-    </TouchableOpacity>
+    </PressableScale>
   );
 });
 
 const styles = StyleSheet.create({
   chip: {
-    width: 210,
+    width: 200,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     marginRight: 10,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  logo: { width: 48, height: 48 },
+  logo: { width: 46, height: 46 },
   meta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  eta: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
+  eta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  rating: { flexDirection: 'row', alignItems: 'center' },
 });

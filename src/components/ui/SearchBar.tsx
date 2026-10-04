@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useTheme } from '@/context/ThemeContext';
+import { PressableScale } from './PressableScale';
+import { IconButton } from './IconButton';
 
 type Props = {
   value: string;
@@ -9,10 +12,12 @@ type Props = {
   placeholder?: string;
   hints?: string[];
   onFocus?: () => void;
+  onBlur?: () => void;
   onSubmit?: () => void;
   editable?: boolean;
   onPress?: () => void;
-  variant?: 'default' | 'pill';
+  variant?: 'default' | 'pill' | 'embedded';
+  style?: StyleProp<ViewStyle>;
 };
 
 export function SearchBar({
@@ -21,14 +26,18 @@ export function SearchBar({
   placeholder = 'Search...',
   hints,
   onFocus,
+  onBlur,
   onSubmit,
   editable = true,
   onPress,
   variant = 'default',
+  style,
 }: Props) {
-  const { colors, radius, spacing, typography, shadows } = useTheme();
+  const { colors, radius, spacing, typography, shadows, layout } = useTheme();
   const isPill = variant === 'pill';
+  const isEmbedded = variant === 'embedded';
   const [hintIndex, setHintIndex] = useState(0);
+  const [focused, setFocused] = useState(false);
   const cycling = Boolean(hints?.length) && !value;
 
   useEffect(() => {
@@ -38,24 +47,40 @@ export function SearchBar({
   }, [hints]);
 
   const livePlaceholder = cycling ? hints![hintIndex] : placeholder;
+  const height = isEmbedded ? 44 : isPill ? 42 : layout.minTouchTarget;
+  const iconSize = isPill || isEmbedded ? 14 : 16;
+  const iconWrapSize = isPill || isEmbedded ? 24 : 28;
 
   const content = (
     <View
       style={[
         styles.container,
+        isPill ? styles.containerPill : null,
+        isEmbedded ? styles.containerEmbedded : null,
         isPill ? shadows.md : null,
+        style,
         {
-          backgroundColor: colors.surface,
-          borderRadius: isPill ? radius.full : radius.md,
-          paddingHorizontal: spacing.lg,
-          borderColor: isPill ? colors.primary : colors.border,
-          borderWidth: isPill ? 1.5 : StyleSheet.hairlineWidth,
-          height: isPill ? 52 : 48,
+          backgroundColor: isEmbedded ? 'transparent' : colors.surface,
+          borderRadius: isPill ? radius.full : isEmbedded ? 0 : radius.md,
+          paddingHorizontal: isEmbedded ? spacing.sm : spacing.md,
+          borderColor: focused ? colors.primary : isPill ? colors.primary : colors.border,
+          borderWidth: isEmbedded ? 0 : focused || isPill ? 1.5 : StyleSheet.hairlineWidth,
+          height,
         },
       ]}
     >
-      <View style={[styles.iconWrap, { backgroundColor: colors.primaryLight }]}>
-        <Text style={styles.searchIcon}>🔍</Text>
+      <View
+        style={[
+          styles.iconWrap,
+          {
+            backgroundColor: colors.primaryLight,
+            width: iconWrapSize,
+            height: iconWrapSize,
+            borderRadius: iconWrapSize / 2,
+          },
+        ]}
+      >
+        <Ionicons name="search" size={iconSize} color={colors.primary} />
       </View>
       {cycling && !editable ? (
         <Animated.Text
@@ -74,26 +99,45 @@ export function SearchBar({
           placeholder={livePlaceholder}
           placeholderTextColor={colors.textMuted}
           style={[styles.input, typography.bodySmall, { color: colors.text, fontWeight: '500' }]}
-          onFocus={onFocus}
+          onFocus={() => {
+            setFocused(true);
+            onFocus?.();
+          }}
+          onBlur={() => {
+            setFocused(false);
+            onBlur?.();
+          }}
           onSubmitEditing={onSubmit}
           editable={editable}
           returnKeyType="search"
           pointerEvents={onPress && !editable ? 'none' : 'auto'}
+          accessibilityLabel="Search"
         />
       )}
       {value.length > 0 && editable ? (
-        <TouchableOpacity onPress={() => onChangeText('')}>
-          <Text style={{ color: colors.textMuted, fontSize: 16 }}>✕</Text>
-        </TouchableOpacity>
+        <IconButton
+          name="close-circle"
+          onPress={() => onChangeText('')}
+          size={20}
+          color={colors.textMuted}
+          accessibilityLabel="Clear search"
+          style={styles.clearBtn}
+        />
       ) : null}
     </View>
   );
 
   if (onPress && !editable) {
     return (
-      <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+      <PressableScale
+        onPress={onPress}
+        haptic="selection"
+        scaleTo={0.99}
+        style={[styles.pressable, style]}
+        accessibilityLabel="Search"
+      >
         {content}
-      </TouchableOpacity>
+      </PressableScale>
     );
   }
 
@@ -106,18 +150,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+  containerPill: {
+    gap: 8,
+  },
+  containerEmbedded: {
+    flex: 1,
+    minWidth: 0,
+    gap: 6,
+  },
   iconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  searchIcon: {
-    fontSize: 13,
   },
   input: {
     flex: 1,
     paddingVertical: 0,
+  },
+  clearBtn: {
+    marginRight: -8,
+  },
+  pressable: {
+    flex: 1,
+    minWidth: 0,
+    alignSelf: 'stretch',
   },
 });

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
-import { colors, spacing, radius, typography, shadows, ThemeColors } from '@/constants/theme';
+import { colors, spacing, radius, typography, shadows, motion, layout, ThemeColors } from '@/constants/theme';
 import { featureFlags } from '@/constants/featureFlags';
 
 type ThemeContextValue = {
@@ -9,6 +9,8 @@ type ThemeContextValue = {
   radius: typeof radius;
   typography: typeof typography;
   shadows: typeof shadows;
+  motion: typeof motion;
+  layout: typeof layout;
   isDark: boolean;
 };
 
@@ -25,6 +27,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       radius,
       typography,
       shadows,
+      motion,
+      layout,
       isDark,
     }),
     [isDark]

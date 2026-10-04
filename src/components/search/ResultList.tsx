@@ -4,6 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Product } from '@/types/product';
 import { ProductCard } from '@/components/home/ProductCard';
 import { useTheme } from '@/context/ThemeContext';
+import { useTabScreenInsets } from '@/hooks/useTabScreenInsets';
 
 const CARD_WIDTH = 162;
 
@@ -13,6 +14,7 @@ type Props = {
 
 export function ProductResultList({ products }: Props) {
   const { spacing } = useTheme();
+  const { contentPaddingBottom } = useTabScreenInsets();
 
   if (!products.length) return null;
 
@@ -24,7 +26,7 @@ export function ProductResultList({ products }: Props) {
         keyExtractor={(item) => item.id}
         numColumns={2}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: contentPaddingBottom }}
       />
     </View>
   );

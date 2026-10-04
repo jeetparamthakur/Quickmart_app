@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, type ColorValue } from 'react-native';
 import type { ComponentProps } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/context/ThemeContext';
 import { useCartStore } from '@/store/cartStore';
 import { t } from '@/i18n';
@@ -13,24 +14,48 @@ function TabIcon({
   color,
   outline,
   filled,
+  label,
 }: {
   focused: boolean;
-  color: string;
+  color: ColorValue;
   outline: IoniconName;
   filled: IoniconName;
+  label: string;
 }) {
-  return <Ionicons name={focused ? filled : outline} size={22} color={color} />;
+  const { colors, radius } = useTheme();
+
+  return (
+    <View
+      style={[
+        styles.iconWrap,
+        focused ? { backgroundColor: colors.primaryLight, borderRadius: radius.full } : null,
+      ]}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: focused }}
+      accessibilityLabel={label}
+    >
+      <Ionicons name={focused ? filled : outline} size={22} color={color} />
+    </View>
+  );
 }
 
-function CartTabIcon({ focused, color }: { focused: boolean; color: string }) {
-  const { colors } = useTheme();
+function CartTabIcon({ focused, color }: { focused: boolean; color: ColorValue }) {
+  const { colors, radius } = useTheme();
   const count = useCartStore((s) => s.getItemCount());
 
   return (
-    <View>
+    <View
+      style={[
+        styles.iconWrap,
+        focused ? { backgroundColor: colors.primaryLight, borderRadius: radius.full } : null,
+      ]}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: focused }}
+      accessibilityLabel={t('cart')}
+    >
       <Ionicons name={focused ? 'bag-handle' : 'bag-handle-outline'} size={22} color={color} />
       {count > 0 && (
-        <View style={[styles.badge, { backgroundColor: colors.accent }]}>
+        <View style={[styles.badge, { backgroundColor: colors.accent, borderColor: colors.surface }]}>
           <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>
         </View>
       )}
@@ -39,7 +64,9 @@ function CartTabIcon({ focused, color }: { focused: boolean; color: string }) {
 }
 
 export default function TabLayout() {
-  const { colors } = useTheme();
+  const { colors, layout } = useTheme();
+  const insets = useSafeAreaInsets();
+  const tabBarPaddingBottom = Math.max(insets.bottom, 8);
 
   return (
     <Tabs
@@ -50,9 +77,9 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          height: 68,
-          paddingBottom: 12,
-          paddingTop: 8,
+          height: layout.tabContentHeight + tabBarPaddingBottom + layout.tabBarPaddingTop,
+          paddingBottom: tabBarPaddingBottom,
+          paddingTop: layout.tabBarPaddingTop,
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
           elevation: 12,
@@ -61,7 +88,7 @@ export default function TabLayout() {
           shadowRadius: 12,
           shadowOffset: { width: 0, height: -4 },
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
       }}
     >
       <Tabs.Screen
@@ -69,7 +96,13 @@ export default function TabLayout() {
         options={{
           title: t('home'),
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} color={color} outline="home-outline" filled="home" />
+            <TabIcon
+              focused={focused}
+              color={color}
+              outline="home-outline"
+              filled="home"
+              label={t('home')}
+            />
           ),
         }}
       />
@@ -78,7 +111,13 @@ export default function TabLayout() {
         options={{
           title: t('categories'),
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} color={color} outline="grid-outline" filled="grid" />
+            <TabIcon
+              focused={focused}
+              color={color}
+              outline="grid-outline"
+              filled="grid"
+              label={t('categories')}
+            />
           ),
         }}
       />
@@ -87,7 +126,13 @@ export default function TabLayout() {
         options={{
           title: t('search'),
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon focused={focused} color={color} outline="search-outline" filled="search" />
+            <TabIcon
+              focused={focused}
+              color={color}
+              outline="search-outline"
+              filled="search"
+              label={t('search')}
+            />
           ),
         }}
       />
@@ -101,7 +146,16 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          href: null,
+          title: t('profile'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              focused={focused}
+              color={color}
+              outline="person-outline"
+              filled="person"
+              label={t('profile')}
+            />
+          ),
         }}
       />
     </Tabs>
@@ -109,16 +163,23 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
+  iconWrap: {
+    width: 48,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -10,
+    top: -2,
+    right: 2,
     minWidth: 18,
     height: 18,
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
+    borderWidth: 2,
   },
   badgeText: { color: '#FFF', fontSize: 10, fontWeight: '700' },
 });

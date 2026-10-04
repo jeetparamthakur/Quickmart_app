@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '@/utils/haptics';
 import { Button } from '@/components/ui';
 import { AuthEnter, OtpBoxes, ShakeView } from '@/components/auth';
 import { useAuthStore } from '@/store/authStore';
 import { authService } from '@/services/api/auth.service';
+import { refreshAddressesFromApi } from '@/hooks/useAddressSync';
 import { useTheme } from '@/context/ThemeContext';
 import { getErrorMessage } from '@/services/api/errors';
 import { t } from '@/i18n';
@@ -54,6 +55,11 @@ export default function OtpScreen() {
       const result = await authService.verifyOtp(phone, code);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await login(result.token, result.user, result.refreshToken);
+      try {
+        await refreshAddressesFromApi();
+      } catch {
+        // keep local addresses
+      }
       router.replace('/(onboarding)/location');
     } catch (err) {
       setError(getErrorMessage(err, t('invalidOtp')));

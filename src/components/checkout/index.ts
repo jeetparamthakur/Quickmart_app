@@ -1,4 +1,5 @@
 export { CheckoutHeader } from './CheckoutHeader';
+export { CheckoutStepIndicator } from './CheckoutStepIndicator';
 export { CheckoutEtaBanner } from './CheckoutEtaBanner';
 export { AddressPicker } from './AddressPicker';
 export { OrderItemsStrip } from './OrderItemsStrip';

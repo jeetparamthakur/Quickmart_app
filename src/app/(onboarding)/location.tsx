@@ -1,170 +1,125 @@
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Location from 'expo-location';
-import { Button, SearchBar } from '@/components/ui';
+import { Ionicons } from '@expo/vector-icons';
+import { ScreenHeader, PressableScale } from '@/components/ui';
+import { AddressSearchInput } from '@/components/location';
+import { SavedAddressCard, AddAddressBanner } from '@/components/address';
 import { useLocationStore } from '@/store/locationStore';
-import { locationService } from '@/services/api/location.service';
 import { useTheme } from '@/context/ThemeContext';
-import { Address } from '@/types/location';
+import type { AddressResult } from '@/utils/address';
 import { t } from '@/i18n';
+
+function openMap(params: Record<string, string>) {
+  router.push({
+    pathname: '/(onboarding)/location-map',
+    params,
+  });
+}
 
 export default function LocationScreen() {
   const { colors, spacing, typography, radius, shadows } = useTheme();
-  const { savedAddresses, setSelectedAddress, addAddress } = useLocationStore();
-  const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState<Address[]>([]);
-  const [detecting, setDetecting] = useState(false);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newAddr, setNewAddr] = useState({ label: 'Home', line1: '', pincode: '' });
+  const { savedAddresses, setSelectedAddress, selectedAddress } = useLocationStore();
 
-  const selectAddress = (address: Address) => {
+  const selectAddress = (address: (typeof savedAddresses)[0]) => {
     setSelectedAddress(address);
-    router.replace('/(tabs)');
-  };
-
-  const detectLocation = async () => {
-    setDetecting(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission denied', 'Please enable location or search manually.');
-        setDetecting(false);
-        return;
-      }
-      const loc = await Location.getCurrentPositionAsync({});
-      const address = await locationService.reverseGeocode(loc.coords.latitude, loc.coords.longitude);
-      selectAddress(address);
-    } catch {
-      Alert.alert('Error', 'Could not detect location. Please search manually.');
-    } finally {
-      setDetecting(false);
-    }
-  };
-
-  const handleSearch = async (query: string) => {
-    setSearch(query);
-    if (query.length > 2) {
-      const results = await locationService.searchAddresses(query);
-      setSearchResults(results);
+    if (router.canGoBack()) {
+      router.back();
     } else {
-      setSearchResults([]);
+      router.replace('/(tabs)');
     }
   };
 
-  const handleAddAddress = () => {
-    if (!newAddr.line1 || !newAddr.pincode) {
-      Alert.alert('Error', 'Please fill all fields');
-      return;
-    }
-    const address: Address = {
-      id: 'addr-' + Date.now(),
-      label: newAddr.label,
-      line1: newAddr.line1,
-      city: 'New Delhi',
-      pincode: newAddr.pincode,
-      latitude: 28.6139,
-      longitude: 77.209,
-    };
-    addAddress(address);
-    setShowAddForm(false);
-    selectAddress(address);
+  const handleSearchSelect = (result: AddressResult) => {
+    openMap({
+      lat: String(result.latitude),
+      lng: String(result.longitude),
+    });
+  };
+
+  const detectLocation = () => {
+    openMap({ autoGps: '1' });
+  };
+
+  const pickOnMap = () => {
+    openMap({});
+  };
+
+  const addNewAddress = () => {
+    openMap({ saveOnly: '1', label: 'Home' });
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg }}>
-        <Text style={[typography.h2, { color: colors.text }]}>{t('selectLocation')}</Text>
-        <Text style={[typography.bodySmall, { color: colors.textSecondary, marginTop: spacing.sm, marginBottom: spacing.xl }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      <ScreenHeader title={t('selectLocation')} gradient />
+      <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingTop: spacing.sm }}>
+        <Text style={[typography.bodySmall, { color: colors.textSecondary, marginBottom: spacing.lg }]}>
           We need your location to show nearby stores and products
         </Text>
 
-        <TouchableOpacity
+        <PressableScale
           onPress={detectLocation}
-          disabled={detecting}
+          haptic="medium"
           style={[
             styles.detectBtn,
             shadows.md,
-            { backgroundColor: colors.primary, borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.lg },
+            {
+              backgroundColor: colors.primary,
+              borderRadius: radius.md,
+              padding: spacing.md,
+              marginBottom: spacing.sm,
+            },
           ]}
         >
-          {detecting ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <>
-              <Text style={{ fontSize: 24 }}>📍</Text>
-              <Text style={[typography.label, { color: '#FFF', marginLeft: spacing.md }]}>
-                {t('detectLocation')}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
+          <Ionicons name="locate" size={22} color="#FFF" />
+          <Text style={[typography.label, { color: '#FFF', marginLeft: spacing.md, fontWeight: '800' }]}>
+            {t('detectLocation')}
+          </Text>
+        </PressableScale>
 
-        <SearchBar
-          value={search}
-          onChangeText={handleSearch}
-          placeholder={t('searchLocation')}
-        />
+        <PressableScale
+          onPress={pickOnMap}
+          haptic="light"
+          style={[
+            styles.detectBtn,
+            {
+              backgroundColor: colors.surface,
+              borderRadius: radius.md,
+              padding: spacing.md,
+              marginBottom: spacing.lg,
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Ionicons name="map-outline" size={22} color={colors.primary} />
+          <Text style={[typography.label, { color: colors.primary, marginLeft: spacing.md, fontWeight: '700' }]}>
+            Pick on map
+          </Text>
+        </PressableScale>
 
-        {searchResults.length > 0 && (
-          <View style={{ marginTop: spacing.md }}>
-            {searchResults.map((addr) => (
-              <TouchableOpacity
-                key={addr.id}
-                onPress={() => selectAddress(addr)}
-                style={[styles.addrCard, { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.sm, borderColor: colors.border, borderWidth: 1 }]}
-              >
-                <Text style={[typography.label, { color: colors.text }]}>{addr.label}</Text>
-                <Text style={[typography.bodySmall, { color: colors.textSecondary }]}>{addr.line1}, {addr.city}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+        <AddressSearchInput placeholder={t('searchLocation')} onSelect={handleSearchSelect} />
 
-        <Text style={[typography.h3, { color: colors.text, marginTop: spacing.xxl, marginBottom: spacing.md }]}>
-          {t('savedAddresses')}
-        </Text>
+        <View style={{ marginTop: spacing.xl, marginBottom: spacing.sm }}>
+          <Text style={[typography.h3, { color: colors.text, fontWeight: '800' }]}>{t('savedAddresses')}</Text>
+          {savedAddresses.length > 0 ? (
+            <Text style={[typography.caption, { color: colors.textSecondary, marginTop: 4 }]}>
+              {t('savedAddressCount').replace('{count}', String(savedAddresses.length))}
+            </Text>
+          ) : null}
+        </View>
+
+        <AddAddressBanner compact onPress={addNewAddress} />
 
         {savedAddresses.map((addr) => (
-          <TouchableOpacity
+          <SavedAddressCard
             key={addr.id}
+            address={addr}
+            selectable
+            selected={selectedAddress?.id === addr.id}
             onPress={() => selectAddress(addr)}
-            style={[styles.addrCard, shadows.sm, { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.sm, borderColor: colors.border, borderWidth: 1 }]}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-              <Text style={{ fontSize: 20 }}>{addr.label === 'Home' ? '🏠' : addr.label === 'Work' ? '🏢' : '📍'}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={[typography.label, { color: colors.text }]}>{addr.label}</Text>
-                <Text style={[typography.bodySmall, { color: colors.textSecondary }]} numberOfLines={2}>
-                  {addr.line1}, {addr.city} - {addr.pincode}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+          />
         ))}
-
-        {!showAddForm ? (
-          <TouchableOpacity onPress={() => setShowAddForm(true)} style={{ marginTop: spacing.md }}>
-            <Text style={[typography.label, { color: colors.primary }]}>+ {t('addNewAddress')}</Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={[styles.form, { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg, marginTop: spacing.md, borderColor: colors.border, borderWidth: 1 }]}>
-            <TextInput placeholder="Label (Home, Work...)" placeholderTextColor={colors.textMuted} value={newAddr.label} onChangeText={(v) => setNewAddr({ ...newAddr, label: v })} style={[styles.formInput, { color: colors.text, borderColor: colors.border }]} />
-            <TextInput placeholder="Address line" placeholderTextColor={colors.textMuted} value={newAddr.line1} onChangeText={(v) => setNewAddr({ ...newAddr, line1: v })} style={[styles.formInput, { color: colors.text, borderColor: colors.border }]} />
-            <TextInput placeholder="Pincode" placeholderTextColor={colors.textMuted} value={newAddr.pincode} onChangeText={(v) => setNewAddr({ ...newAddr, pincode: v })} keyboardType="number-pad" style={[styles.formInput, { color: colors.text, borderColor: colors.border }]} />
-            <Button title="Save & Continue" onPress={handleAddAddress} fullWidth />
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -173,7 +128,4 @@ export default function LocationScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   detectBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  addrCard: {},
-  form: { gap: 12 },
-  formInput: { borderWidth: 1, borderRadius: 8, padding: 12, fontSize: 16 },
 });

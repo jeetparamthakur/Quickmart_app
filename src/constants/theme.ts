@@ -62,10 +62,28 @@ export const radius = {
   full: 9999,
 };
 
+export const motion = {
+  pressScale: 0.97,
+  spring: { damping: 18, stiffness: 320 },
+  springSoft: { damping: 14, stiffness: 240 },
+  duration: {
+    fast: 180,
+    normal: 280,
+    slow: 400,
+  },
+};
+
+export const layout = {
+  minTouchTarget: 44,
+  tabContentHeight: 52,
+  tabBarPaddingTop: 8,
+  screenHeaderHeight: 52,
+};
+
 export const typography = {
   h1: { fontSize: 28, fontWeight: '700' as const, lineHeight: 34 },
-  h2: { fontSize: 22, fontWeight: '700' as const, lineHeight: 28 },
-  h3: { fontSize: 18, fontWeight: '800' as const, lineHeight: 24 },
+  h2: { fontSize: 22, fontWeight: '700' as const, lineHeight: 26 },
+  h3: { fontSize: 18, fontWeight: '800' as const, lineHeight: 22 },
   body: { fontSize: 16, fontWeight: '400' as const, lineHeight: 22 },
   bodySmall: { fontSize: 14, fontWeight: '400' as const, lineHeight: 20 },
   caption: { fontSize: 12, fontWeight: '400' as const, lineHeight: 16 },
