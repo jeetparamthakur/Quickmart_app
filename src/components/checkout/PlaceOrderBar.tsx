@@ -26,8 +26,8 @@ export function PlaceOrderBar({ total, itemCount, loading, disabled, onPlaceOrde
         styles.footer,
         shadows.lg,
         {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: colors.card,
+          borderTopColor: colors.borderSubtle,
           padding: spacing.md,
           paddingBottom: Math.max(insets.bottom, spacing.md),
         },

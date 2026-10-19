@@ -56,17 +56,17 @@ export function DeleteAddressSheet({ visible, address, loading = false, onClose,
             styles.sheet,
             shadows.lg,
             {
-              backgroundColor: colors.surface,
-              borderTopLeftRadius: radius.lg + 4,
-              borderTopRightRadius: radius.lg + 4,
+              backgroundColor: colors.card,
+              borderTopLeftRadius: radius.xl,
+              borderTopRightRadius: radius.xl,
               paddingBottom: insets.bottom + spacing.lg,
             },
           ]}
         >
-          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          <View style={[styles.handle, { backgroundColor: colors.borderSubtle }]} />
 
           <View style={[styles.iconRing, { backgroundColor: colors.errorLight }]}>
-            <View style={[styles.iconInner, { backgroundColor: colors.surface }]}>
+            <View style={[styles.iconInner, { backgroundColor: colors.card }]}>
               <Ionicons name="trash-outline" size={28} color={colors.error} />
             </View>
           </View>
@@ -90,8 +90,8 @@ export function DeleteAddressSheet({ visible, address, loading = false, onClose,
                 marginTop: spacing.lg,
                 marginHorizontal: spacing.lg,
                 backgroundColor: colors.surfaceSecondary,
-                borderRadius: radius.md,
-                borderColor: colors.border,
+                borderRadius: radius.lg,
+                borderColor: colors.borderSubtle,
                 padding: spacing.md,
               },
             ]}
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: spacingHandle,
+    marginBottom: 8,
   },
   iconRing: {
     alignSelf: 'center',

@@ -32,7 +32,7 @@ const SECTIONS: { title: string; items: MenuItem[] }[] = [
 ];
 
 export default function ProfileScreen() {
-  const { colors, spacing, typography } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const { contentPaddingBottom } = useTabScreenInsets();
   const logout = useAuthStore((s) => s.logout);
 
@@ -53,18 +53,29 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.pageHeader, { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md }]}>
-        <Text style={[typography.h2, { color: colors.text, fontWeight: '800', letterSpacing: -0.4 }]}>
+        <Text style={[typography.h2, { color: colors.text, letterSpacing: -0.4 }]}>
           {t('profile')}
         </Text>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingTop: 0, paddingBottom: contentPaddingBottom }}>
         {SECTIONS.map((section) => (
-          <View key={section.title} style={{ marginBottom: spacing.md }}>
+          <View
+            key={section.title}
+            style={{
+              marginBottom: spacing.md,
+              backgroundColor: colors.card,
+              borderRadius: radius.lg,
+              padding: spacing.sm,
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: colors.borderSubtle,
+              ...shadows.sm,
+            }}
+          >
             <Text
               style={[
                 typography.caption,
-                { color: colors.textSecondary, fontWeight: '700', marginBottom: spacing.sm, marginLeft: 4 },
+                { color: colors.textSecondary, marginBottom: spacing.sm, marginLeft: spacing.xs, textTransform: 'uppercase', letterSpacing: 0.6 },
               ]}
             >
               {section.title}

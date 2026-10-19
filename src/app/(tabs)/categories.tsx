@@ -10,7 +10,7 @@ import { useTabScreenInsets } from '@/hooks/useTabScreenInsets';
 import { t } from '@/i18n';
 
 export default function CategoriesScreen() {
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, radius } = useTheme();
   const { contentPaddingBottom } = useTabScreenInsets();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function CategoriesScreen() {
       {loading ? (
         <View style={{ padding: spacing.lg, flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} width={100} height={100} borderRadius={12} />
+            <Skeleton key={i} width={100} height={100} borderRadius={radius.lg} />
           ))}
         </View>
       ) : (

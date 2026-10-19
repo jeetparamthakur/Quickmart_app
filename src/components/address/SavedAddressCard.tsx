@@ -84,7 +84,7 @@ export function SavedAddressCard({
         style={[
           styles.leadIcon,
           {
-            backgroundColor: selected ? colors.surface : colors.primaryLight,
+            backgroundColor: selected ? colors.card : colors.primaryLight,
             borderRadius: radius.sm,
           },
         ]}
@@ -146,7 +146,7 @@ export function SavedAddressCard({
             style={[
               styles.radio,
               {
-                borderColor: selected ? colors.primary : colors.border,
+                borderColor: selected ? colors.primary : colors.borderSubtle,
                 backgroundColor: selected ? colors.primary : 'transparent',
               },
             ]}
@@ -162,11 +162,11 @@ export function SavedAddressCard({
     styles.card,
     shadows.sm,
     {
-      backgroundColor: selected ? colors.primaryLight : colors.surface,
-      borderRadius: radius.md,
+      backgroundColor: selected ? colors.primaryLight : colors.card,
+      borderRadius: radius.lg,
       marginBottom: spacing.sm,
       borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
-      borderColor: selected ? colors.primary : colors.border,
+      borderColor: selected ? colors.primary : colors.borderSubtle,
     },
   ];
 

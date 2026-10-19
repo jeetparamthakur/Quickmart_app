@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function ProductSection({ section, tint = 'none', variant = 'retail' }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   const products = section.products.slice(0, 10);
 
@@ -38,7 +38,7 @@ export function ProductSection({ section, tint = 'none', variant = 'retail' }: P
         paddingVertical: tint === 'none' ? 0 : spacing.sm,
         borderRadius: tint === 'none' ? 0 : radius.lg,
         borderWidth: tint === 'none' ? 0 : StyleSheet.hairlineWidth,
-        borderColor: tint === 'none' ? 'transparent' : colors.border,
+        borderColor: tint === 'none' ? 'transparent' : colors.borderSubtle,
       }}
     >
       <View style={[styles.heading, { paddingHorizontal: spacing.lg, marginBottom: spacing.sm }]}>
@@ -59,7 +59,11 @@ export function ProductSection({ section, tint = 'none', variant = 'retail' }: P
           <PressableScale
             onPress={() => router.push(`/category/${seeAllCategory}`)}
             haptic="selection"
-            style={[styles.seeAll, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[
+              styles.seeAll,
+              shadows.sm,
+              { backgroundColor: colors.card, borderColor: colors.borderSubtle, borderRadius: radius.full },
+            ]}
           >
             <Text style={[typography.caption, { color: colors.primary, fontWeight: '800' }]}>{t('seeAll')}</Text>
             <Ionicons name="chevron-forward" size={14} color={colors.primary} />

@@ -61,10 +61,10 @@ export function useCartPricing(): CartPricing {
 
     let cancelled = false;
     const timer = setTimeout(async () => {
+      if (cancelled) return;
       setLoading(true);
       try {
-        await cartApi.syncItems(items);
-        const preview = await cartApi.preview(couponCode ?? undefined);
+        const preview = await cartApi.syncAndPreview(items, couponCode ?? undefined);
         if (cancelled || !preview) return;
 
         const charges: CartChargeLine[] = (preview.pricing.charges ?? []).map((c) => ({

@@ -11,11 +11,11 @@ type Props = {
 };
 
 export function ImageCarousel({ images, height = 320 }: Props) {
-  const { colors } = useTheme();
+  const { colors, radius } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <View>
+    <View style={[styles.wrap, { backgroundColor: colors.surfaceSecondary }]}>
       <ScrollView
         horizontal
         pagingEnabled
@@ -27,9 +27,19 @@ export function ImageCarousel({ images, height = 320 }: Props) {
           <Image key={i} source={{ uri: img }} style={{ width, height }} contentFit="contain" />
         ))}
       </ScrollView>
-      <View style={styles.dots}>
+      <View style={[styles.dots, { backgroundColor: colors.card, borderRadius: radius.full }]}>
         {images.map((_, i) => (
-          <View key={i} style={[styles.dot, { backgroundColor: i === activeIndex ? colors.primary : colors.border }]} />
+          <View
+            key={i}
+            style={[
+              styles.dot,
+              {
+                backgroundColor: i === activeIndex ? colors.primary : colors.borderSubtle,
+                width: i === activeIndex ? 18 : 6,
+                borderRadius: radius.full,
+              },
+            ]}
+          />
         ))}
       </View>
     </View>
@@ -37,6 +47,16 @@ export function ImageCarousel({ images, height = 320 }: Props) {
 }
 
 const styles = StyleSheet.create({
-  dots: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 8 },
-  dot: { width: 8, height: 8, borderRadius: 4 },
+  wrap: { paddingBottom: 8 },
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'center',
+    marginTop: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  dot: { height: 6 },
 });

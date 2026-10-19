@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const FoodProductCard = memo(function FoodProductCard({ product, width = CARD_WIDTH }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const addItem = useCartStore((s) => s.addItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const quantity = useCartStore((s) => s.getQuantity(product.id, product.storeId));
@@ -29,10 +29,24 @@ export const FoodProductCard = memo(function FoodProductCard({ product, width = 
     transform: [{ scale: scale.value }],
   }));
 
-  const vegColor = product.isVeg ? '#2E7D32' : '#C62828';
+  const vegColor = product.isVeg ? colors.success : colors.error;
 
   return (
-    <Animated.View style={[styles.card, animStyle, { width }]}>
+    <Animated.View
+      style={[
+        styles.card,
+        animStyle,
+        shadows.sm,
+        {
+          width,
+          backgroundColor: colors.card,
+          borderRadius: radius.lg,
+          borderColor: colors.borderSubtle,
+          borderWidth: StyleSheet.hairlineWidth,
+          padding: spacing.sm,
+        },
+      ]}
+    >
       <Pressable
         onPress={() => {
           Haptics.selectionAsync();

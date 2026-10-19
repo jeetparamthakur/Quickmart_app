@@ -22,14 +22,14 @@ export function BottomSheet({ visible, onClose, title, children }: Props) {
             styles.sheet,
             {
               backgroundColor: colors.surface,
-              borderTopLeftRadius: radius.lg,
-              borderTopRightRadius: radius.lg,
+              borderTopLeftRadius: radius.xxl,
+              borderTopRightRadius: radius.xxl,
               paddingBottom: insets.bottom + spacing.lg,
             },
           ]}
           onPress={(e) => e.stopPropagation()}
         >
-          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          <View style={[styles.handle, { backgroundColor: colors.border, width: 48, height: 5, borderRadius: 3 }]} />
           {title ? (
             <View style={[styles.header, { paddingHorizontal: spacing.lg, paddingBottom: spacing.md }]}>
               <Text style={[typography.h3, { color: colors.text }]}>{title}</Text>

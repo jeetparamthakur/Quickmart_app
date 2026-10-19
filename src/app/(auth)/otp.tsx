@@ -54,13 +54,16 @@ export default function OtpScreen() {
     try {
       const result = await authService.verifyOtp(phone, code);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await login(result.token, result.user, result.refreshToken);
+      const needsName = result.isNewUser === true;
+      await login(result.token, result.user, result.refreshToken, {
+        requiresNameSetup: needsName,
+      });
       try {
         await refreshAddressesFromApi();
       } catch {
         // keep local addresses
       }
-      router.replace('/(onboarding)/location');
+      router.replace(needsName ? '/(onboarding)/your-name' : '/(onboarding)/location');
     } catch (err) {
       setError(getErrorMessage(err, t('invalidOtp')));
       setOtp(['', '', '', '', '', '']);
@@ -95,7 +98,10 @@ export default function OtpScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           hitSlop={12}
-          style={[styles.back, { backgroundColor: colors.surfaceSecondary, borderRadius: radius.full }]}
+          style={[
+            styles.back,
+            { backgroundColor: colors.card, borderRadius: radius.full, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.borderSubtle },
+          ]}
         >
           <Text style={[styles.backGlyph, { color: colors.text }]}>←</Text>
         </TouchableOpacity>

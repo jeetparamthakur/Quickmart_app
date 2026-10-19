@@ -11,7 +11,7 @@ export function BrandMark() {
       style={[
         styles.mark,
         shadows.lg,
-        { backgroundColor: colors.surface, borderRadius: radius.lg },
+        { backgroundColor: colors.card, borderRadius: radius.xl },
       ]}
     >
       <Text style={[styles.letter, { color: colors.primary }]}>Q</Text>

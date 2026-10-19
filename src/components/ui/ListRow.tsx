@@ -26,7 +26,7 @@ export function ListRow({
   showChevron = true,
   accessibilityLabel,
 }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const labelColor = destructive ? colors.error : colors.text;
 
   return (
@@ -39,19 +39,20 @@ export function ListRow({
         {
           paddingVertical: spacing.sm,
           paddingHorizontal: spacing.md,
-          borderRadius: radius.md,
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
+          borderRadius: radius.lg,
+          backgroundColor: colors.card,
+          borderColor: colors.borderSubtle,
           borderWidth: StyleSheet.hairlineWidth,
           marginBottom: spacing.sm,
+          ...shadows.sm,
         },
       ]}
     >
-      <View style={[styles.iconWrap, { backgroundColor: destructive ? colors.errorLight : colors.primaryLight }]}>
+      <View style={[styles.iconWrap, { backgroundColor: destructive ? colors.errorLight : colors.primaryLight, borderRadius: radius.md }]}>
         <Ionicons name={icon} size={20} color={destructive ? colors.error : colors.primary} />
       </View>
       <View style={styles.textWrap}>
-        <Text style={[typography.body, { color: labelColor, fontWeight: '600' }]}>{label}</Text>
+        <Text style={[typography.label, { color: labelColor }]}>{label}</Text>
         {subtitle ? (
           <Text style={[typography.caption, { color: colors.textSecondary, marginTop: 2 }]}>{subtitle}</Text>
         ) : null}

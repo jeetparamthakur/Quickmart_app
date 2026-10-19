@@ -22,7 +22,7 @@ export function AddAddressBanner({ onPress, compact = false }: Props) {
           styles.compactRow,
           shadows.sm,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.card,
             borderRadius: radius.lg,
             borderColor: colors.primary,
             padding: spacing.md,

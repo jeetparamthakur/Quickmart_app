@@ -20,7 +20,7 @@ type Props = {
 };
 
 export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props) {
-  const { colors, spacing, typography } = useTheme();
+  const { colors, spacing, typography, radius } = useTheme();
   const swipeRef = useRef<Swipeable>(null);
   const orig = item.product.originalPrice;
   const discount = orig ? formatDiscount(orig, item.price) : 0;
@@ -33,11 +33,8 @@ export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props)
   };
 
   return (
-    <Animated.View
-      entering={FadeIn.duration(220)}
-      exiting={FadeOut.duration(160)}
-      layout={LinearTransition.springify().damping(18)}
-    >
+    <Animated.View layout={LinearTransition.springify().damping(18)}>
+      <Animated.View entering={FadeIn.duration(220)} exiting={FadeOut.duration(160)}>
       <Swipeable
         ref={swipeRef}
         friction={2}
@@ -58,10 +55,10 @@ export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props)
           style={[
             styles.item,
             {
-              backgroundColor: colors.surface,
+              backgroundColor: colors.card,
               paddingHorizontal: spacing.md,
               paddingVertical: spacing.sm,
-              borderBottomColor: colors.border,
+              borderBottomColor: colors.borderSubtle,
               borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth,
             },
           ]}
@@ -71,7 +68,7 @@ export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props)
               Haptics.selectionAsync();
               router.push(`/product/${item.productId}`);
             }}
-            style={[styles.imageWrap, { backgroundColor: colors.surfaceSecondary }]}
+            style={[styles.imageWrap, { backgroundColor: colors.surfaceSecondary, borderRadius: radius.md }]}
           >
             <Image source={{ uri: item.product.image }} style={styles.image} contentFit="contain" transition={180} />
             {discount > 0 ? (
@@ -128,6 +125,7 @@ export function CartItemRow({ item, onRemove, onUpdateQuantity, isLast }: Props)
           </View>
         </View>
       </Swipeable>
+      </Animated.View>
     </Animated.View>
   );
 }

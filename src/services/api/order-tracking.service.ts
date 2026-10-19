@@ -94,7 +94,29 @@ function mapApiResponse(raw: Record<string, unknown>): OrderTrackingSnapshot {
   };
 }
 
-async function fallbackFromOrderDetail(orderId: string): Promise<OrderTrackingSnapshot | null> {
+export type TrackingFetchOptions = {
+  deliveryOverride?: { lat: number; lng: number; addressLine?: string };
+};
+
+function applyDeliveryOverride(
+  snapshot: OrderTrackingSnapshot,
+  override?: TrackingFetchOptions['deliveryOverride'],
+): OrderTrackingSnapshot {
+  if (!override?.lat || !override?.lng) return snapshot;
+  return {
+    ...snapshot,
+    delivery: {
+      addressLine: override.addressLine ?? snapshot.delivery.addressLine,
+      lat: override.lat,
+      lng: override.lng,
+    },
+  };
+}
+
+async function fallbackFromOrderDetail(
+  orderId: string,
+  options?: TrackingFetchOptions,
+): Promise<OrderTrackingSnapshot | null> {
   const detail = await ordersService.getById(orderId);
   if (!detail) return null;
 
@@ -114,38 +136,64 @@ async function fallbackFromOrderDetail(orderId: string): Promise<OrderTrackingSn
 
   const isTerminal = detail.status === 'delivered' || detail.status === 'cancelled';
 
-  return {
-    orderId: detail.id,
-    orderNumber: detail.orderNumber,
-    parentStatus: detail.status,
-    isTerminal,
-    etaMinutes: 25,
-    delivery: { addressLine: 'Delivery address', lat: 28.6139, lng: 77.209 },
-    stages: { current: primary, steps: buildSteps(primary) },
-    subOrders: detail.subOrders.map((sub) => ({
-      id: sub.id,
-      storeName: sub.storeName ?? 'Store',
-      status: sub.status,
-      statusLabel: sub.statusLabel,
-      pickup: { lat: 28.614, lng: 77.21, addressLine: sub.storeName ?? 'Store' },
-    })),
-  };
+  const deliveryLine = options?.deliveryOverride?.addressLine ?? 'Delivery address';
+  const deliveryLat = options?.deliveryOverride?.lat ?? 28.6139;
+  const deliveryLng = options?.deliveryOverride?.lng ?? 77.209;
+
+  return applyDeliveryOverride(
+    {
+      orderId: detail.id,
+      orderNumber: detail.orderNumber,
+      parentStatus: detail.status,
+      isTerminal,
+      etaMinutes: 25,
+      delivery: { addressLine: deliveryLine, lat: deliveryLat, lng: deliveryLng },
+      stages: { current: primary, steps: buildSteps(primary) },
+      subOrders: detail.subOrders.map((sub) => ({
+        id: sub.id,
+        storeName: sub.storeName ?? 'Store',
+        status: sub.status,
+        statusLabel: sub.statusLabel,
+        pickup: { lat: 28.614, lng: 77.21, addressLine: sub.storeName ?? 'Store' },
+      })),
+    },
+    options?.deliveryOverride,
+  );
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export const orderTrackingService = {
-  async getTracking(orderId: string): Promise<OrderTrackingSnapshot | null> {
+  async getTracking(orderId: string, options?: TrackingFetchOptions): Promise<OrderTrackingSnapshot | null> {
     if (!orderId) return null;
 
     if (USE_MOCK || !UUID_RE.test(orderId)) {
-      return fallbackFromOrderDetail(orderId);
+      return fallbackFromOrderDetail(orderId, options);
     }
 
     try {
       const raw = await apiRequest<Record<string, unknown>>(`/customer/orders/${orderId}/tracking`);
-      return mapApiResponse(raw);
+      return applyDeliveryOverride(mapApiResponse(raw), options?.deliveryOverride);
     } catch {
-      return fallbackFromOrderDetail(orderId);
+      return fallbackFromOrderDetail(orderId, options);
     }
+  },
+
+  async getTrackingWithRetry(
+    orderId: string,
+    options?: TrackingFetchOptions & { retries?: number; retryDelayMs?: number },
+  ): Promise<OrderTrackingSnapshot | null> {
+    const retries = options?.retries ?? 0;
+    const delay = options?.retryDelayMs ?? 800;
+    let last: OrderTrackingSnapshot | null = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      last = await this.getTracking(orderId, options);
+      if (last) return last;
+      if (attempt < retries) await sleep(delay);
+    }
+    return last;
   },
 
   headlineFor(snapshot: OrderTrackingSnapshot): string {

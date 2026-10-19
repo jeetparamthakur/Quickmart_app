@@ -87,7 +87,18 @@ export default function SavedAddressesScreen() {
         }
         ListEmptyComponent={
           <View style={[styles.empty, { paddingVertical: spacing.xxl }]}>
-            <View style={[styles.emptyIcon, shadows.md, { backgroundColor: colors.surface, borderRadius: radius.lg }]}>
+            <View
+              style={[
+                styles.emptyIcon,
+                shadows.md,
+                {
+                  backgroundColor: colors.card,
+                  borderRadius: radius.lg,
+                  borderColor: colors.borderSubtle,
+                  borderWidth: StyleSheet.hairlineWidth,
+                },
+              ]}
+            >
               <Ionicons name="map-outline" size={40} color={colors.primary} />
             </View>
             <Text style={[typography.h3, { color: colors.text, marginTop: spacing.lg, fontWeight: '800', textAlign: 'center' }]}>

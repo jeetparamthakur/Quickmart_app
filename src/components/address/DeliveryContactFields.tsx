@@ -21,15 +21,18 @@ export function DeliveryContactFields({
   nameError,
   phoneError,
 }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
     <View
       style={[
         styles.block,
+        shadows.sm,
         {
-          backgroundColor: colors.surfaceSecondary,
-          borderRadius: radius.md,
+          backgroundColor: colors.card,
+          borderRadius: radius.lg,
+          borderColor: colors.borderSubtle,
+          borderWidth: StyleSheet.hairlineWidth,
           padding: spacing.md,
           gap: spacing.sm,
         },
@@ -39,9 +42,9 @@ export function DeliveryContactFields({
         style={[
           styles.field,
           {
-            backgroundColor: colors.surface,
-            borderRadius: radius.sm,
-            borderColor: nameError ? colors.error : 'transparent',
+            backgroundColor: colors.surfaceSecondary,
+            borderRadius: radius.md,
+            borderColor: nameError ? colors.error : colors.borderSubtle,
           },
         ]}
       >
@@ -60,14 +63,14 @@ export function DeliveryContactFields({
         style={[
           styles.field,
           {
-            backgroundColor: colors.surface,
-            borderRadius: radius.sm,
-            borderColor: phoneError ? colors.error : 'transparent',
+            backgroundColor: colors.surfaceSecondary,
+            borderRadius: radius.md,
+            borderColor: phoneError ? colors.error : colors.borderSubtle,
           },
         ]}
       >
         <Text style={[typography.label, { color: colors.textSecondary, fontWeight: '700' }]}>+91</Text>
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        <View style={[styles.divider, { backgroundColor: colors.borderSubtle }]} />
         <Ionicons name="call-outline" size={18} color={colors.textMuted} />
         <TextInput
           placeholder={t('receiverPhone')}

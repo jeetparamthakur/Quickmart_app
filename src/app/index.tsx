@@ -12,7 +12,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function SplashScreenRoute() {
   const { colors, typography, spacing } = useTheme();
-  const { isAuthenticated, isHydrated: authHydrated } = useAuthStore();
+  const { isAuthenticated, requiresNameSetup, isHydrated: authHydrated } = useAuthStore();
   const { hasLocation, isHydrated: locHydrated } = useLocationStore();
   const [step, setStep] = useState<'logo' | 'location' | 'done'>('logo');
 
@@ -28,6 +28,8 @@ export default function SplashScreenRoute() {
       setStep('done');
       if (!isAuthenticated) {
         router.replace('/(auth)/login');
+      } else if (requiresNameSetup) {
+        router.replace('/(onboarding)/your-name');
       } else if (!hasLocation()) {
         router.replace('/(onboarding)/location');
       } else {
@@ -39,7 +41,7 @@ export default function SplashScreenRoute() {
       clearTimeout(timer1);
       clearTimeout(timer2);
     };
-  }, [authHydrated, locHydrated, isAuthenticated, hasLocation]);
+  }, [authHydrated, locHydrated, isAuthenticated, requiresNameSetup, hasLocation]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

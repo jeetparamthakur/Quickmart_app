@@ -27,7 +27,7 @@ export function Badge({ label, variant = 'primary', style }: Props) {
         styles.badge,
         {
           backgroundColor: v.bg,
-          borderRadius: radius.sm,
+          borderRadius: radius.full,
           paddingHorizontal: spacing.sm,
           paddingVertical: 2,
         },

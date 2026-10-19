@@ -12,7 +12,7 @@ export function CheckoutStepIndicator() {
         <View key={label} style={styles.step}>
           <View style={[styles.dot, { backgroundColor: colors.primary }]} />
           <Text style={[typography.caption, { color: colors.textSecondary, fontWeight: '600' }]}>{label}</Text>
-          {i < STEPS.length - 1 ? <View style={[styles.line, { backgroundColor: colors.border }]} /> : null}
+          {i < STEPS.length - 1 ? <View style={[styles.line, { backgroundColor: colors.borderSubtle }]} /> : null}
         </View>
       ))}
     </View>

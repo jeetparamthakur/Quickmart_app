@@ -26,5 +26,5 @@ export function NetworkBanner() {
 }
 
 const styles = StyleSheet.create({
-  banner: { paddingVertical: 8, paddingHorizontal: 16 },
+  banner: { paddingVertical: 6, paddingHorizontal: 16 },
 });

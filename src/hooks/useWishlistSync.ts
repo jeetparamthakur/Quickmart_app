@@ -6,6 +6,7 @@ import { wishlistService } from '@/services/api/wishlist.service';
 /** Loads wishlist product IDs from API when the user is authenticated. */
 export function useWishlistSync() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const token = useAuthStore((s) => s.token);
   const authHydrated = useAuthStore((s) => s.isHydrated);
   const setFromServer = useWishlistStore((s) => s.setFromServer);
   const clear = useWishlistStore((s) => s.clear);
@@ -14,7 +15,7 @@ export function useWishlistSync() {
   useEffect(() => {
     if (!authHydrated) return;
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !token) {
       clear();
       return;
     }
@@ -38,7 +39,7 @@ export function useWishlistSync() {
     return () => {
       cancelled = true;
     };
-  }, [authHydrated, isAuthenticated, setFromServer, clear]);
+  }, [authHydrated, isAuthenticated, token, setFromServer, clear]);
 }
 
 export async function refreshWishlistFromApi() {

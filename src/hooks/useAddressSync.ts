@@ -6,12 +6,13 @@ import { addressService } from '@/services/api/address.service';
 /** Loads saved addresses from API when the user is authenticated. */
 export function useAddressSync() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const token = useAuthStore((s) => s.token);
   const authHydrated = useAuthStore((s) => s.isHydrated);
   const setSavedAddresses = useLocationStore((s) => s.setSavedAddresses);
   const lastFetch = useRef(0);
 
   useEffect(() => {
-    if (!authHydrated || !isAuthenticated) return;
+    if (!authHydrated || !isAuthenticated || !token) return;
 
     const now = Date.now();
     if (now - lastFetch.current < 2000) return;
@@ -32,7 +33,7 @@ export function useAddressSync() {
     return () => {
       cancelled = true;
     };
-  }, [authHydrated, isAuthenticated, setSavedAddresses]);
+  }, [authHydrated, isAuthenticated, token, setSavedAddresses]);
 }
 
 export async function refreshAddressesFromApi() {

@@ -19,9 +19,9 @@ export function CartGroupSection({ group, onRemove, onUpdateQuantity }: Props) {
         styles.card,
         shadows.md,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.card,
           borderRadius: radius.lg,
-          borderColor: colors.border,
+          borderColor: colors.borderSubtle,
           marginBottom: spacing.lg,
           paddingTop: spacing.xs,
         },

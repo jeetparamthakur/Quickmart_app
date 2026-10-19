@@ -50,7 +50,7 @@ export default function ProductDetailScreen() {
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, padding: spacing.lg }}>
-        <Skeleton height={300} borderRadius={16} />
+        <Skeleton height={300} borderRadius={radius.lg} />
         <Skeleton height={24} style={{ marginTop: 16 }} />
         <Skeleton height={16} width="60%" style={{ marginTop: 8 }} />
       </SafeAreaView>
@@ -75,6 +75,9 @@ export default function ProductDetailScreen() {
   const discount = originalPrice ? formatDiscount(originalPrice, price) : 0;
   const storeId = selectedSeller?.storeId ?? product.storeId;
   const storeName = selectedSeller?.storeName ?? product.storeName;
+  const specificationEntries = Object.entries(product.specifications ?? {}).filter(
+    ([key, value]) => key.trim() && String(value).trim(),
+  );
 
   const handleWishlistPress = () => {
     if (!product) return;
@@ -143,7 +146,20 @@ export default function ProductDetailScreen() {
             />
           )}
 
-          <View style={[styles.infoBox, { backgroundColor: colors.surfaceSecondary, borderRadius: radius.md, padding: spacing.lg, marginTop: spacing.xl }]}>
+          <View
+            style={[
+              styles.infoBox,
+              shadows.sm,
+              {
+                backgroundColor: colors.card,
+                borderRadius: radius.lg,
+                borderColor: colors.borderSubtle,
+                borderWidth: StyleSheet.hairlineWidth,
+                padding: spacing.lg,
+                marginTop: spacing.xl,
+              },
+            ]}
+          >
             <Text style={[typography.bodySmall, { color: colors.textSecondary }]}>
               🚚 Delivery in {selectedSeller?.deliveryMinutes ?? 15}-{(selectedSeller?.deliveryMinutes ?? 15) + 10} min from {storeName}
             </Text>
@@ -155,13 +171,26 @@ export default function ProductDetailScreen() {
           <Text style={[typography.h3, { color: colors.text, marginTop: spacing.xxl }]}>Description</Text>
           <Text style={[typography.body, { color: colors.textSecondary, marginTop: spacing.sm }]}>{product.description}</Text>
 
-          <Text style={[typography.h3, { color: colors.text, marginTop: spacing.xl }]}>Specifications</Text>
-          {Object.entries(product.specifications).map(([key, val]) => (
-            <View key={key} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }}>
-              <Text style={[typography.bodySmall, { color: colors.textMuted }]}>{key}</Text>
-              <Text style={[typography.bodySmall, { color: colors.text }]}>{val}</Text>
-            </View>
-          ))}
+          {specificationEntries.length > 0 && (
+            <>
+              <Text style={[typography.h3, { color: colors.text, marginTop: spacing.xl }]}>Specifications</Text>
+              {specificationEntries.map(([key, val]) => (
+                <View
+                  key={key}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingVertical: spacing.sm,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: colors.borderSubtle,
+                  }}
+                >
+                  <Text style={[typography.bodySmall, { color: colors.textMuted }]}>{key}</Text>
+                  <Text style={[typography.bodySmall, { color: colors.text }]}>{val}</Text>
+                </View>
+              ))}
+            </>
+          )}
 
           {similar.length > 0 && (
             <>
@@ -177,7 +206,15 @@ export default function ProductDetailScreen() {
 
       <Animated.View
         entering={FadeInDown.duration(400)}
-        style={[styles.footer, shadows.lg, { backgroundColor: colors.surface, borderTopColor: colors.border, borderTopWidth: StyleSheet.hairlineWidth }]}
+        style={[
+          styles.footer,
+          shadows.lg,
+          {
+            backgroundColor: colors.card,
+            borderTopColor: colors.borderSubtle,
+            borderTopWidth: StyleSheet.hairlineWidth,
+          },
+        ]}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md }}>
           <QuantityStepper
@@ -197,7 +234,7 @@ export default function ProductDetailScreen() {
               colors={[colors.primary, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={[styles.addCta, { borderRadius: radius.md }]}
+              style={[styles.addCta, { borderRadius: radius.lg }]}
             >
               <Ionicons name="bag-add-outline" size={20} color="#FFF" />
               <Text style={[typography.label, { color: '#FFF', fontWeight: '800', marginLeft: 8 }]}>{t('addToCart')}</Text>

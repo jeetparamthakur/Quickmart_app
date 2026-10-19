@@ -44,10 +44,10 @@ export function CartSummary({
       style={[
         shadows.sm,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.card,
           borderRadius: radius.lg,
           padding: spacing.lg,
-          borderColor: colors.border,
+          borderColor: colors.borderSubtle,
           borderWidth: StyleSheet.hairlineWidth,
         },
       ]}
@@ -70,11 +70,16 @@ export function CartSummary({
         <SummaryRow label={t('couponDiscount')} value={`−${formatPrice(couponDiscount)}`} highlight />
       )}
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <View style={[styles.divider, { backgroundColor: colors.borderSubtle }]} />
       <SummaryRow label={t('finalTotal')} value={formatPrice(total)} bold />
 
       {savings > 0 ? (
-        <View style={[styles.savings, { backgroundColor: colors.successLight, marginTop: spacing.md }]}>
+        <View
+          style={[
+            styles.savings,
+            { backgroundColor: colors.successLight, marginTop: spacing.md, borderRadius: radius.lg },
+          ]}
+        >
           <Ionicons name="pricetag" size={14} color={colors.success} />
           <Text style={[typography.caption, { color: colors.success, fontWeight: '700', flex: 1 }]}>
             {t('youSaved', { amount: formatPrice(savings) })}
@@ -128,6 +133,5 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 12,
   },
 });

@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function StoreDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const [store, setStore] = useState<Store | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +56,22 @@ export default function StoreDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Image source={{ uri: store.image }} style={{ width: '100%', height: 160 }} contentFit="cover" />
         <View style={{ padding: spacing.lg }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+          <View
+            style={[
+              shadows.sm,
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.md,
+                backgroundColor: colors.card,
+                borderRadius: radius.lg,
+                borderColor: colors.borderSubtle,
+                borderWidth: StyleSheet.hairlineWidth,
+                padding: spacing.md,
+                marginBottom: spacing.md,
+              },
+            ]}
+          >
             <Image source={{ uri: store.logo }} style={{ width: 52, height: 52, borderRadius: radius.md }} contentFit="cover" />
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -67,7 +82,7 @@ export default function StoreDetailScreen() {
               </View>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md, flexWrap: 'wrap' }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' }}>
             {!store.isOpen && <Badge label="Closed" variant="error" />}
             {store.offer && <Badge label={store.offer} variant="accent" />}
             <Badge

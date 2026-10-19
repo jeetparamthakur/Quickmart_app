@@ -105,7 +105,7 @@ export const checkoutService = {
 
   async getPreview(items?: CartItem[]) {
     if (USE_MOCK || (items && !canUseBackendCart(items))) return null;
-    if (items?.length) await cartApi.syncItems(items);
+    if (items?.length) return cartApi.syncAndPreview(items);
     return cartApi.preview();
   },
 

@@ -20,7 +20,7 @@ export function EmptyState({ icon = 'cart-outline', title, subtitle, actionLabel
 
   return (
     <View style={[styles.container, { padding: spacing.xxxl }]}>
-      <View style={[styles.iconWrap, { backgroundColor: colors.primaryLight, borderRadius: radius.lg }]}>
+      <View style={[styles.iconWrap, { backgroundColor: colors.primaryLight, borderRadius: radius.full }]}>
         <Ionicons name={icon} size={42} color={colors.primary} />
       </View>
       <Text style={[typography.h3, { color: colors.text, textAlign: 'center', marginTop: spacing.lg }]}>

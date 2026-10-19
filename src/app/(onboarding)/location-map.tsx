@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   mapSection: { position: 'relative', width: '100%' },
   gpsOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
   },

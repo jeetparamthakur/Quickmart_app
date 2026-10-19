@@ -56,8 +56,10 @@ function FilterOption({ label, active, onToggle }: { label: string; active: bool
       style={[
         styles.option,
         {
-          backgroundColor: active ? colors.primaryLight : colors.surfaceSecondary,
-          borderRadius: radius.sm,
+          backgroundColor: active ? colors.primaryLight : colors.card,
+          borderRadius: radius.lg,
+          borderColor: active ? colors.primary : colors.borderSubtle,
+          borderWidth: StyleSheet.hairlineWidth,
           padding: spacing.md,
           marginBottom: spacing.sm,
         },

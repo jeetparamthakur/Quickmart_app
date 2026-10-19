@@ -22,9 +22,11 @@ export function Card({ children, style, padding, variant = 'elevated', onPress }
     variant === 'outline' ? { borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border } : null,
     variant === 'flat' ? { borderWidth: 0 } : null,
     {
-      backgroundColor: colors.surface,
-      borderRadius: radius.md,
+      backgroundColor: colors.card,
+      borderRadius: radius.lg,
       padding: padding ?? spacing.lg,
+      borderWidth: variant === 'elevated' ? StyleSheet.hairlineWidth : undefined,
+      borderColor: variant === 'elevated' ? colors.borderSubtle : undefined,
     },
     style,
   ];

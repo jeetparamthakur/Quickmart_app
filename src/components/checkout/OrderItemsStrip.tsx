@@ -29,8 +29,8 @@ export function OrderItemsStrip({ items }: Props) {
         styles.card,
         shadows.sm,
         {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
+          backgroundColor: colors.card,
+          borderColor: colors.borderSubtle,
           borderRadius: radius.lg,
           padding: spacing.md,
           marginBottom: spacing.lg,
@@ -47,7 +47,7 @@ export function OrderItemsStrip({ items }: Props) {
               {
                 marginLeft: i === 0 ? 0 : -10,
                 zIndex: preview.length - i,
-                borderColor: colors.surface,
+                borderColor: colors.card,
                 backgroundColor: colors.surfaceSecondary,
               },
             ]}
@@ -60,7 +60,7 @@ export function OrderItemsStrip({ items }: Props) {
               {
                 marginLeft: -10,
                 backgroundColor: colors.primaryLight,
-                borderColor: colors.surface,
+                borderColor: colors.card,
               },
             ]}
           >

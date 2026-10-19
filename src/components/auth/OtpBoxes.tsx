@@ -46,8 +46,8 @@ function OtpDigit({
     transform: [{ scale: scale.value }],
   }));
 
-  const borderColor = focused ? colors.primary : digit ? colors.primary : colors.border;
-  const backgroundColor = focused ? colors.primaryLight : colors.surface;
+  const borderColor = focused ? colors.primary : digit ? colors.primary : colors.borderSubtle;
+  const backgroundColor = focused ? colors.primaryLight : colors.card;
 
   return (
     <Animated.View style={animatedStyle}>

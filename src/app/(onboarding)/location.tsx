@@ -65,7 +65,7 @@ export default function LocationScreen() {
             shadows.md,
             {
               backgroundColor: colors.primary,
-              borderRadius: radius.md,
+              borderRadius: radius.lg,
               padding: spacing.md,
               marginBottom: spacing.sm,
             },
@@ -83,12 +83,12 @@ export default function LocationScreen() {
           style={[
             styles.detectBtn,
             {
-              backgroundColor: colors.surface,
-              borderRadius: radius.md,
+              backgroundColor: colors.card,
+              borderRadius: radius.lg,
               padding: spacing.md,
               marginBottom: spacing.lg,
               borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.border,
+              borderColor: colors.borderSubtle,
             },
           ]}
         >

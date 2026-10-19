@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import type { StyleProp, ViewStyle } from 'react-native';
+import type { AnimatedStyle } from 'react-native-reanimated';
 import { SearchBar } from '@/components/ui';
 import { FoodGroceriesSwitch } from '@/components/home/FoodGroceriesSwitch';
 import { useTheme } from '@/context/ThemeContext';
@@ -10,7 +11,7 @@ import { useHomeModeStore } from '@/store/homeModeStore';
 import { t } from '@/i18n';
 
 type Props = {
-  animatedStyle?: StyleProp<ViewStyle>;
+  animatedStyle?: StyleProp<ViewStyle> | AnimatedStyle<ViewStyle>;
 };
 
 export function HomeSearchModeBar({ animatedStyle }: Props) {

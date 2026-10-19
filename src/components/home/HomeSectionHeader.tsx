@@ -33,7 +33,7 @@ export function HomeSectionHeader({ title, subtitle, onSeeAll, accentColor }: Pr
         <PressableScale
           onPress={onSeeAll}
           haptic="selection"
-          style={[styles.seeAll, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.full }]}
+          style={[styles.seeAll, { backgroundColor: colors.primaryLight, borderColor: 'transparent', borderRadius: radius.full }]}
         >
           <Text style={[typography.caption, { color: colors.primary, fontWeight: '800' }]}>{t('seeAll')}</Text>
           <Ionicons name="chevron-forward" size={14} color={colors.primary} />

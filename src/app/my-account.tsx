@@ -9,16 +9,10 @@ import { useAuthStore } from '@/store/authStore';
 import { customerService } from '@/services/api/customer.service';
 import { getErrorMessage } from '@/services/api/errors';
 import { formatDisplayPhone } from '@/types/location';
-
-const PLACEHOLDER_NAME = 'User';
-
-function isDefaultName(name?: string | null) {
-  const trimmed = name?.trim();
-  return !trimmed || trimmed === PLACEHOLDER_NAME;
-}
+import { isDefaultProfileName } from '@/utils/customerProfile';
 
 export default function MyAccountScreen() {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const user = useAuthStore((s) => s.user);
   const storedPhone = useAuthStore((s) => s.phone);
   const updateUser = useAuthStore((s) => s.updateUser);
@@ -36,14 +30,14 @@ export default function MyAccountScreen() {
       const displayPhone = formatDisplayPhone(profile.phone ?? user?.phone ?? storedPhone);
       setPhone(displayPhone);
       const initialName = profile.fullName ?? user?.name;
-      setName(isDefaultName(initialName) ? '' : (initialName?.trim() ?? ''));
-      if (profile.fullName && !isDefaultName(profile.fullName)) {
+      setName(isDefaultProfileName(initialName) ? '' : (initialName?.trim() ?? ''));
+      if (profile.fullName && !isDefaultProfileName(profile.fullName)) {
         updateUser({ name: profile.fullName, phone: profile.phone ?? user?.phone });
       }
     } catch (err) {
       setPhone(formatDisplayPhone(user?.phone ?? storedPhone));
       const fallback = user?.name;
-      setName(isDefaultName(fallback) ? '' : (fallback?.trim() ?? ''));
+      setName(isDefaultProfileName(fallback) ? '' : (fallback?.trim() ?? ''));
       Alert.alert('My Account', getErrorMessage(err, 'Could not load your profile'));
     } finally {
       setLoading(false);
@@ -90,9 +84,12 @@ export default function MyAccountScreen() {
           <View
             style={[
               styles.fieldBlock,
+              shadows.sm,
               {
-                backgroundColor: colors.surfaceSecondary,
-                borderRadius: radius.md,
+                backgroundColor: colors.card,
+                borderRadius: radius.lg,
+                borderColor: colors.borderSubtle,
+                borderWidth: StyleSheet.hairlineWidth,
                 padding: spacing.md,
                 gap: spacing.md,
               },
@@ -114,9 +111,9 @@ export default function MyAccountScreen() {
               style={[
                 styles.inputRow,
                 {
-                  backgroundColor: colors.surface,
-                  borderRadius: radius.sm,
-                  borderColor: nameError ? colors.error : 'transparent',
+                  backgroundColor: colors.surfaceSecondary,
+                  borderRadius: radius.md,
+                  borderColor: nameError ? colors.error : colors.borderSubtle,
                 },
               ]}
             >

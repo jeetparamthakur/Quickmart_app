@@ -18,7 +18,7 @@ const METHODS: {
 }[] = [{ id: 'cod', label: 'payCod', hint: 'payCodHint', icon: 'cash-outline' }];
 
 export function PaymentMethodList({ value, onChange }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
     <View style={{ marginBottom: spacing.lg }}>
@@ -36,16 +36,22 @@ export function PaymentMethodList({ value, onChange }: Props) {
             }}
             style={[
               styles.row,
+              shadows.sm,
               {
-                backgroundColor: selected ? colors.primaryLight : colors.surface,
-                borderColor: selected ? colors.primary : colors.border,
+                backgroundColor: selected ? colors.primaryLight : colors.card,
+                borderColor: selected ? colors.primary : colors.borderSubtle,
                 borderRadius: radius.lg,
                 padding: spacing.md,
                 marginBottom: spacing.sm,
               },
             ]}
           >
-            <View style={[styles.iconWrap, { backgroundColor: selected ? colors.surface : colors.surfaceSecondary }]}>
+            <View
+              style={[
+                styles.iconWrap,
+                { backgroundColor: selected ? colors.card : colors.surfaceSecondary, borderRadius: radius.md },
+              ]}
+            >
               <Ionicons name={pm.icon} size={18} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
@@ -56,7 +62,7 @@ export function PaymentMethodList({ value, onChange }: Props) {
               style={[
                 styles.radio,
                 {
-                  borderColor: selected ? colors.primary : colors.border,
+                  borderColor: selected ? colors.primary : colors.borderSubtle,
                   backgroundColor: selected ? colors.primary : 'transparent',
                 },
               ]}

@@ -19,7 +19,7 @@ export function ErrorState({ icon = 'alert-circle-outline', title, subtitle, onR
 
   return (
     <View style={[styles.container, { padding: spacing.xxxl }]}>
-      <View style={[styles.iconWrap, { backgroundColor: colors.errorLight, borderRadius: radius.lg }]}>
+      <View style={[styles.iconWrap, { backgroundColor: colors.errorLight, borderRadius: radius.full }]}>
         <Ionicons name={icon} size={40} color={colors.error} />
       </View>
       <Text style={[typography.h3, { color: colors.text, textAlign: 'center', marginTop: spacing.lg }]}>

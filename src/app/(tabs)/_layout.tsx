@@ -22,40 +22,40 @@ function TabIcon({
   filled: IoniconName;
   label: string;
 }) {
-  const { colors, radius } = useTheme();
+  const { colors, layout } = useTheme();
 
   return (
     <View
-      style={[
-        styles.iconWrap,
-        focused ? { backgroundColor: colors.primaryLight, borderRadius: radius.full } : null,
-      ]}
+      style={[styles.iconWrap, { height: layout.tabContentHeight }]}
       accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
       accessibilityLabel={label}
     >
+      {focused ? (
+        <View style={[styles.indicator, { backgroundColor: colors.primary }]} />
+      ) : null}
       <Ionicons name={focused ? filled : outline} size={22} color={color} />
     </View>
   );
 }
 
 function CartTabIcon({ focused, color }: { focused: boolean; color: ColorValue }) {
-  const { colors, radius } = useTheme();
+  const { colors, layout } = useTheme();
   const count = useCartStore((s) => s.getItemCount());
 
   return (
     <View
-      style={[
-        styles.iconWrap,
-        focused ? { backgroundColor: colors.primaryLight, borderRadius: radius.full } : null,
-      ]}
+      style={[styles.iconWrap, { height: layout.tabContentHeight }]}
       accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
       accessibilityLabel={t('cart')}
     >
+      {focused ? (
+        <View style={[styles.indicator, { backgroundColor: colors.primary }]} />
+      ) : null}
       <Ionicons name={focused ? 'bag-handle' : 'bag-handle-outline'} size={22} color={color} />
       {count > 0 && (
-        <View style={[styles.badge, { backgroundColor: colors.accent, borderColor: colors.surface }]}>
+        <View style={[styles.badge, { backgroundColor: colors.primary, borderColor: colors.tabBar }]}>
           <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>
         </View>
       )}
@@ -64,7 +64,7 @@ function CartTabIcon({ focused, color }: { focused: boolean; color: ColorValue }
 }
 
 export default function TabLayout() {
-  const { colors, layout } = useTheme();
+  const { colors, layout, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const tabBarPaddingBottom = Math.max(insets.bottom, 8);
 
@@ -75,20 +75,17 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.borderSubtle,
+          borderTopWidth: StyleSheet.hairlineWidth,
           height: layout.tabContentHeight + tabBarPaddingBottom + layout.tabBarPaddingTop,
           paddingBottom: tabBarPaddingBottom,
           paddingTop: layout.tabBarPaddingTop,
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-          elevation: 12,
-          shadowColor: '#000',
-          shadowOpacity: 0.08,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: -4 },
+          ...shadows.sm,
+          shadowOffset: { width: 0, height: -1 },
+          shadowOpacity: 0.04,
         },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 0 },
       }}
     >
       <Tabs.Screen
@@ -164,15 +161,21 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconWrap: {
-    width: 48,
-    height: 32,
+    width: 52,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  indicator: {
+    position: 'absolute',
+    top: 0,
+    width: 22,
+    height: 3,
+    borderRadius: 2,
+  },
   badge: {
     position: 'absolute',
-    top: -2,
-    right: 2,
+    top: 0,
+    right: 4,
     minWidth: 18,
     height: 18,
     borderRadius: 9,

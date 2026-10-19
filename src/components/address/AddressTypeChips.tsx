@@ -19,7 +19,7 @@ type Props = {
 };
 
 export function AddressTypeChips({ value, onChange }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const normalized = ADDRESS_TYPES.includes(value as AddressType) ? (value as AddressType) : 'Home';
 
   return (
@@ -30,7 +30,7 @@ export function AddressTypeChips({ value, onChange }: Props) {
           styles.segmented,
           {
             backgroundColor: colors.surfaceSecondary,
-            borderRadius: radius.md,
+            borderRadius: radius.lg,
             padding: 4,
           },
         ]}
@@ -47,11 +47,11 @@ export function AddressTypeChips({ value, onChange }: Props) {
               style={[
                 styles.segment,
                 {
-                  borderRadius: radius.sm,
-                  backgroundColor: selected ? colors.surface : 'transparent',
+                  borderRadius: radius.md,
+                  backgroundColor: selected ? colors.card : 'transparent',
                   flex: 1,
                 },
-                selected ? { shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 2 } : null,
+                selected ? shadows.sm : null,
               ]}
             >
               <Ionicons name={TYPE_ICONS[type]} size={16} color={selected ? colors.primary : colors.textMuted} />

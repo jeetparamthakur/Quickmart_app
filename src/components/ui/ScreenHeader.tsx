@@ -9,6 +9,7 @@ type Props = {
   title: string;
   subtitle?: string;
   showBack?: boolean;
+  backIcon?: 'chevron-back' | 'close';
   onBack?: () => void;
   trailing?: React.ReactNode;
   gradient?: boolean;
@@ -19,6 +20,7 @@ export function ScreenHeader({
   title,
   subtitle,
   showBack,
+  backIcon = 'chevron-back',
   onBack,
   trailing,
   gradient = false,
@@ -45,9 +47,9 @@ export function ScreenHeader({
     >
       {showBack ? (
         <IconButton
-          name="chevron-back"
+          name={backIcon}
           onPress={handleBack}
-          accessibilityLabel="Go back"
+          accessibilityLabel={backIcon === 'close' ? 'Close' : 'Go back'}
           style={styles.backBtn}
         />
       ) : (
@@ -98,8 +100,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   title: {
-    fontWeight: '800',
-    letterSpacing: -0.4,
+    letterSpacing: -0.5,
     textAlign: 'center',
   },
   trailing: {

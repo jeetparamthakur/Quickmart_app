@@ -19,7 +19,7 @@ import { t } from '@/i18n';
 const RECENT_KEY = 'recent-searches';
 
 export default function SearchScreen() {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const { contentPaddingBottom } = useTabScreenInsets();
   const [query, setQuery] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
@@ -87,7 +87,16 @@ export default function SearchScreen() {
                     key={r}
                     onPress={() => setQuery(r)}
                     haptic="selection"
-                    style={[styles.chip, { backgroundColor: colors.primaryLight, borderRadius: radius.full, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth }]}
+                    style={[
+                      styles.chip,
+                      shadows.sm,
+                      {
+                        backgroundColor: colors.card,
+                        borderRadius: radius.full,
+                        borderColor: colors.borderSubtle,
+                        borderWidth: StyleSheet.hairlineWidth,
+                      },
+                    ]}
                   >
                     <Ionicons name="time-outline" size={14} color={colors.primary} />
                     <Text style={[typography.caption, { color: colors.text, fontWeight: '600', marginLeft: 4 }]}>{r}</Text>
@@ -103,7 +112,16 @@ export default function SearchScreen() {
                 key={s}
                 onPress={() => setQuery(s)}
                 haptic="selection"
-                style={[styles.chip, { backgroundColor: colors.accentLight, borderRadius: radius.full }]}
+                style={[
+                  styles.chip,
+                  shadows.sm,
+                  {
+                    backgroundColor: colors.primaryLight,
+                    borderRadius: radius.full,
+                    borderColor: colors.borderSubtle,
+                    borderWidth: StyleSheet.hairlineWidth,
+                  },
+                ]}
               >
                 <Ionicons name="flame-outline" size={14} color={colors.primary} />
                 <Text style={[typography.caption, { color: colors.primary, fontWeight: '700', marginLeft: 4 }]}>{s}</Text>
@@ -144,7 +162,9 @@ export default function SearchScreen() {
 
           {loading ? (
             <View style={{ padding: spacing.lg, flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-              {[1, 2, 3, 4].map((i) => <Skeleton key={i} width={150} height={200} borderRadius={12} />)}
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} width={150} height={200} borderRadius={radius.lg} />
+              ))}
             </View>
           ) : tab === 'products' ? (
             products.length === 0 ? (

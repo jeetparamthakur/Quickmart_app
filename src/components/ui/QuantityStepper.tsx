@@ -22,9 +22,10 @@ export function QuantityStepper({
   size = 'md',
   disabled = false,
 }: Props) {
-  const { colors, radius, spacing, typography } = useTheme();
+  const { colors, radius, spacing, typography, fontFamily, shadows } = useTheme();
   const isSmall = size === 'sm';
   const isOverlay = size === 'overlay';
+  const pillRadius = radius.full;
 
   const handleIncrease = () => {
     if (disabled || quantity >= max) return;
@@ -43,30 +44,32 @@ export function QuantityStepper({
       <TouchableOpacity
         onPress={handleIncrease}
         disabled={disabled}
-        activeOpacity={0.85}
+        activeOpacity={0.88}
         accessibilityRole="button"
         accessibilityLabel="Add to cart"
         style={[
           styles.addBtn,
+          shadows.sm,
           {
-            backgroundColor: isOverlay ? colors.surface : colors.primary,
-            borderRadius: isOverlay ? 10 : radius.sm,
-            paddingHorizontal: isOverlay ? 14 : isSmall ? spacing.sm : spacing.md,
-            paddingVertical: isOverlay ? 6 : isSmall ? 4 : spacing.sm,
-            borderWidth: isOverlay ? 2.5 : 0,
-            borderColor: colors.primaryDark,
+            backgroundColor: isOverlay ? colors.surface : colors.cta,
+            borderRadius: pillRadius,
+            paddingHorizontal: isOverlay ? 16 : isSmall ? spacing.md : spacing.lg,
+            paddingVertical: isOverlay ? 7 : isSmall ? 5 : 7,
+            borderWidth: isOverlay ? 2 : 0,
+            borderColor: colors.cta,
             opacity: disabled ? 0.45 : 1,
+            minWidth: isSmall ? 56 : 64,
           },
-          isOverlay ? styles.overlayShadow : null,
         ]}
       >
         <Text
           style={[
             typography.label,
             {
-              color: isOverlay ? colors.primary : '#FFF',
-              fontSize: isOverlay ? 13 : isSmall ? 12 : 14,
-              fontWeight: '800',
+              color: isOverlay ? colors.cta : '#FFF',
+              fontSize: isOverlay ? 12 : isSmall ? 11 : 13,
+              fontFamily: fontFamily.extraBold,
+              letterSpacing: 0.6,
             },
           ]}
         >
@@ -80,11 +83,11 @@ export function QuantityStepper({
     <View
       style={[
         styles.stepper,
-        isOverlay ? styles.overlayShadow : null,
+        shadows.sm,
         {
-          backgroundColor: colors.primary,
-          borderRadius: isOverlay ? radius.md : radius.sm,
-          paddingHorizontal: isOverlay ? 2 : spacing.xs,
+          backgroundColor: colors.cta,
+          borderRadius: pillRadius,
+          paddingHorizontal: isOverlay ? 4 : spacing.xs,
           opacity: disabled ? 0.45 : 1,
         },
       ]}
@@ -96,12 +99,18 @@ export function QuantityStepper({
         accessibilityRole="button"
         accessibilityLabel="Decrease quantity"
       >
-        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>−</Text>
+        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18, fontFamily: fontFamily.bold }]}>−</Text>
       </TouchableOpacity>
       <Text
         style={[
           typography.label,
-          { color: '#FFF', minWidth: 18, textAlign: 'center', fontSize: isOverlay || isSmall ? 13 : 15 },
+          {
+            color: '#FFF',
+            minWidth: 20,
+            textAlign: 'center',
+            fontSize: isOverlay || isSmall ? 13 : 15,
+            fontFamily: fontFamily.bold,
+          },
         ]}
       >
         {quantity}
@@ -113,7 +122,7 @@ export function QuantityStepper({
         accessibilityRole="button"
         accessibilityLabel="Increase quantity"
       >
-        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18 }]}>+</Text>
+        <Text style={[styles.stepText, { fontSize: isOverlay || isSmall ? 16 : 18, fontFamily: fontFamily.bold }]}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -124,25 +133,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  overlayShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 4,
-  },
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 0,
   },
   stepBtn: {
     padding: 6,
-    minWidth: 28,
+    minWidth: 30,
     alignItems: 'center',
   },
   stepText: {
     color: '#FFF',
-    fontWeight: '700',
   },
 });

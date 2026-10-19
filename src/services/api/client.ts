@@ -5,10 +5,22 @@ import { normalizeError, type AppError } from './errors';
 const TOKEN_KEY = 'auth-token';
 const REFRESH_KEY = 'auth-refresh-token';
 
-let onUnauthorized: (() => void) | null = null;
+let onUnauthorized: (() => void | Promise<void>) | null = null;
+let refreshPromise: Promise<string | null> | null = null;
+let unauthorizedHandling: Promise<void> | null = null;
 
-export function setOnUnauthorized(handler: (() => void) | null) {
+export function setOnUnauthorized(handler: (() => void | Promise<void>) | null) {
   onUnauthorized = handler;
+}
+
+async function handleUnauthorized(): Promise<void> {
+  if (!onUnauthorized) return;
+  if (!unauthorizedHandling) {
+    unauthorizedHandling = Promise.resolve(onUnauthorized()).finally(() => {
+      unauthorizedHandling = null;
+    });
+  }
+  await unauthorizedHandling;
 }
 
 export async function getStoredToken(): Promise<string | null> {
@@ -39,32 +51,42 @@ function logApi(level: 'log' | 'error', message: string, extra?: unknown) {
 }
 
 async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = await SecureStore.getItemAsync(REFRESH_KEY);
-  if (!refreshToken) return null;
-  try {
-    const res = await fetch(`${API_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-    });
-    const json = (await res.json().catch(() => null)) as
-      | { token?: string; refreshToken?: string; data?: { token?: string; refreshToken?: string } }
-      | null;
-    if (!res.ok) {
-      logApi('error', `[API] refresh failed ${res.status}`, json);
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    const refreshToken = await SecureStore.getItemAsync(REFRESH_KEY);
+    if (!refreshToken) return null;
+    try {
+      const res = await fetch(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      const json = (await res.json().catch(() => null)) as
+        | { token?: string; refreshToken?: string; data?: { token?: string; refreshToken?: string } }
+        | null;
+      if (!res.ok) {
+        await clearStoredTokens();
+        logApi('log', `[API] refresh failed ${res.status}`, json);
+        return null;
+      }
+      const data = json?.data ?? json;
+      if (!data?.token) {
+        await clearStoredTokens();
+        logApi('log', '[API] refresh returned no token', json);
+        return null;
+      }
+      await setStoredTokens(data.token, data.refreshToken);
+      return data.token;
+    } catch (error) {
+      logApi('error', '[API] refresh token failed', error);
       return null;
+    } finally {
+      refreshPromise = null;
     }
-    const data = json?.data ?? json;
-    if (!data?.token) {
-      logApi('error', '[API] refresh returned no token', json);
-      return null;
-    }
-    await setStoredTokens(data.token, data.refreshToken);
-    return data.token;
-  } catch (error) {
-    logApi('error', '[API] refresh token failed', error);
-    return null;
-  }
+  })();
+
+  return refreshPromise;
 }
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
@@ -141,13 +163,17 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
         logApi('error', `[API] ✗ ${method} ${url} retry after refresh failed`, error);
         throw new ApiClientError(normalizeError({ errorCode: 'NETWORK_ERROR' }, 0));
       }
+      if (response.status === 401) {
+        await handleUnauthorized();
+        throw new ApiClientError(
+          normalizeError({ errorCode: 'SESSION_EXPIRED', message: 'Session expired' }, 401),
+        );
+      }
     } else {
-      onUnauthorized?.();
-      const expired = new ApiClientError(
+      await handleUnauthorized();
+      throw new ApiClientError(
         normalizeError({ errorCode: 'SESSION_EXPIRED', message: 'Session expired' }, 401),
       );
-      logApi('error', `[API] ✗ ${method} ${url} 401 session expired`, expired);
-      throw expired;
     }
   }
 

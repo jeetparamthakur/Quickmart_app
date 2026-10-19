@@ -21,11 +21,11 @@ export const StoreChip = memo(function StoreChip({ store }: Props) {
       haptic="selection"
       style={[
         styles.chip,
-        shadows.md,
+        shadows.sm,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.card,
           borderRadius: radius.lg,
-          borderColor: store.isOpen ? colors.border : colors.error,
+          borderColor: store.isOpen ? colors.borderSubtle : colors.error,
           padding: spacing.sm,
         },
       ]}
@@ -36,7 +36,7 @@ export const StoreChip = memo(function StoreChip({ store }: Props) {
           {store.name}
         </Text>
         <View style={styles.meta}>
-          <View style={[styles.eta, { backgroundColor: colors.primaryLight }]}>
+          <View style={[styles.eta, { backgroundColor: colors.primaryLight, borderRadius: radius.full }]}>
             <Ionicons name="flash" size={11} color={colors.primary} />
             <Text style={[typography.caption, { color: colors.primary, fontWeight: '800', marginLeft: 3 }]}>
               {store.deliveryMinutes} {t('minutesShort')}
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
   },
   rating: { flexDirection: 'row', alignItems: 'center' },
 });

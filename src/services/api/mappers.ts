@@ -1,7 +1,36 @@
-import { Product } from '@/types/product';
+import { Product, Category } from '@/types/product';
 import { Store } from '@/types/store';
-import { Category } from '@/types/product';
 import { Banner, BannerTargetType } from '@/types/banner';
+
+function mapSpecificationsFromAttributes(
+  attrs: Record<string, unknown>,
+): Record<string, string> {
+  const raw = attrs.specifications;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    const label = key.trim();
+    const text = typeof value === 'string' ? value.trim() : String(value ?? '').trim();
+    if (label && text) out[label] = text;
+  }
+  return out;
+}
+
+function mapProductImagesFromAttributes(
+  attrs: Record<string, unknown>,
+  fallbackId: string,
+): { image: string; images: string[] } {
+  const raw = attrs.images;
+  const fromAttrs = Array.isArray(raw)
+    ? raw.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    : [];
+  if (fromAttrs.length > 0) {
+    const primary = fromAttrs[0];
+    return { image: primary, images: fromAttrs };
+  }
+  const placeholder = `https://picsum.photos/seed/${fallbackId}/400/400`;
+  return { image: placeholder, images: [placeholder] };
+}
 
 export function mapBackendProduct(sp: Record<string, unknown>): Product {
   const mp = sp.masterProduct as Record<string, unknown> | undefined;
@@ -11,7 +40,7 @@ export function mapBackendProduct(sp: Record<string, unknown>): Product {
   const qty = (inv?.quantityAvailable as number) ?? 0;
   const reserved = (inv?.quantityReserved as number) ?? 0;
   const id = sp.id as string;
-  const image = 'https://picsum.photos/seed/' + id + '/400/400';
+  const { image, images } = mapProductImagesFromAttributes(attrs, id);
   const topProductType = sp.productType as string | undefined;
   const productType =
     topProductType === 'food' || attrs.productType === 'food' ? 'food' : 'retail';
@@ -23,12 +52,12 @@ export function mapBackendProduct(sp: Record<string, unknown>): Product {
     price: parseFloat(sp.sellingPrice as string),
     originalPrice: parseFloat(sp.mrp as string),
     image,
-    images: [image],
+    images,
     rating: 4.5,
     reviewCount: 0,
     unit: (mp?.baseUnit as string) ?? 'pc',
     description: (mp?.description as string) ?? '',
-    specifications: {},
+    specifications: mapSpecificationsFromAttributes(attrs),
     inStock: qty - reserved > 0,
     categoryId: (mp?.categoryId as string) ?? '',
     storeId: (sp.storeId as string) ?? '',

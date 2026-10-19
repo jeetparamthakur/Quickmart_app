@@ -26,12 +26,12 @@ export function SellerPicker({ sellers, selectedStoreId, onSelect }: Props) {
             styles.card,
             shadows.sm,
             {
-              backgroundColor: selectedStoreId === seller.storeId ? colors.primaryLight : colors.surface,
-              borderRadius: radius.md,
+              backgroundColor: selectedStoreId === seller.storeId ? colors.primaryLight : colors.card,
+              borderRadius: radius.lg,
               padding: spacing.lg,
               marginBottom: spacing.sm,
-              borderColor: selectedStoreId === seller.storeId ? colors.primary : colors.border,
-              borderWidth: 1,
+              borderColor: selectedStoreId === seller.storeId ? colors.primary : colors.borderSubtle,
+              borderWidth: StyleSheet.hairlineWidth,
             },
           ]}
         >

@@ -24,7 +24,7 @@ function formatOrderDateTime(iso: string) {
 
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const [order, setOrder] = useState<CustomerOrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -82,7 +82,8 @@ export default function OrderDetailScreen() {
           <View
             style={[
               styles.card,
-              { backgroundColor: colors.surface, borderRadius: radius.lg, borderColor: colors.border },
+              shadows.sm,
+              { backgroundColor: colors.card, borderRadius: radius.lg, borderColor: colors.borderSubtle },
             ]}
           >
             <Text style={[typography.caption, { color: colors.textSecondary }]}>{t('orderId')}</Text>
@@ -119,7 +120,8 @@ export default function OrderDetailScreen() {
               key={group.id}
               style={[
                 styles.card,
-                { backgroundColor: colors.surface, borderRadius: radius.lg, borderColor: colors.border },
+                shadows.sm,
+              { backgroundColor: colors.card, borderRadius: radius.lg, borderColor: colors.borderSubtle },
               ]}
             >
               <View style={styles.groupHeader}>
@@ -129,7 +131,7 @@ export default function OrderDetailScreen() {
                 <Text style={[typography.caption, { color: colors.textSecondary }]}>{group.statusLabel}</Text>
               </View>
               {group.items.map((item) => (
-                <View key={item.id} style={[styles.lineItem, { borderTopColor: colors.border }]}>
+                <View key={item.id} style={[styles.lineItem, { borderTopColor: colors.borderSubtle }]}>
                   <View style={{ flex: 1 }}>
                     <Text style={[typography.body, { color: colors.text }]} numberOfLines={2}>
                       {item.name}
@@ -149,7 +151,8 @@ export default function OrderDetailScreen() {
           <View
             style={[
               styles.card,
-              { backgroundColor: colors.surface, borderRadius: radius.lg, borderColor: colors.border },
+              shadows.sm,
+              { backgroundColor: colors.card, borderRadius: radius.lg, borderColor: colors.borderSubtle },
             ]}
           >
             <Text style={[typography.label, { color: colors.text, fontWeight: '700', marginBottom: spacing.sm }]}>
@@ -169,7 +172,12 @@ export default function OrderDetailScreen() {
             {order.platformFee > 0 ? (
               <Row label={t('platformFee')} value={formatPrice(order.platformFee)} colors={colors} typography={typography} />
             ) : null}
-            <View style={[styles.totalRow, { borderTopColor: colors.border, marginTop: spacing.sm, paddingTop: spacing.sm }]}>
+            <View
+              style={[
+                styles.totalRow,
+                { borderTopColor: colors.borderSubtle, marginTop: spacing.sm, paddingTop: spacing.sm },
+              ]}
+            >
               <Text style={[typography.label, { color: colors.text, fontWeight: '800' }]}>{t('finalTotal')}</Text>
               <Text style={[typography.h3, { color: colors.primary, fontWeight: '800' }]}>
                 {formatPrice(order.total)}

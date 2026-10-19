@@ -28,6 +28,7 @@ import { Banner } from '@/types/banner';
 import { Category, ProductSection as ProductSectionType } from '@/types/product';
 import { Store } from '@/types/store';
 import { useTheme } from '@/context/ThemeContext';
+import { shadows as themeShadows } from '@/constants/theme';
 import { useTabScreenInsets } from '@/hooks/useTabScreenInsets';
 import { t } from '@/i18n';
 
@@ -93,7 +94,7 @@ export default function HomeScreen() {
   const chromeStyle = useAnimatedStyle(() => ({
     shadowOpacity: interpolate(scrollY.value, [0, 32], [0, 0.1], 'clamp'),
     elevation: interpolate(scrollY.value, [0, 32], [0, 6], 'clamp'),
-    borderBottomColor: interpolateColor(scrollY.value, [0, 32], ['transparent', colors.border]),
+    borderBottomColor: interpolateColor(scrollY.value, [0, 32], ['transparent', colors.borderSubtle]),
   }));
 
   const searchStyle = useAnimatedStyle(() => ({
@@ -187,9 +188,9 @@ const styles = StyleSheet.create({
   chrome: {
     zIndex: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 10,
+    shadowColor: themeShadows.sm.shadowColor,
+    shadowOffset: themeShadows.sm.shadowOffset,
+    shadowRadius: themeShadows.sm.shadowRadius,
   },
   wash: { paddingTop: 2 },
 });

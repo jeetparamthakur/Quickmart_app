@@ -1,55 +1,97 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
 import { useGoogleMapsProvider } from '@/utils/address';
 import type { OrderTrackingSnapshot } from '@/types/order-tracking';
+import {
+  getMapFocusCoordinates,
+  getMapRouteSegments,
+  getTrackingMapPhase,
+  shouldShowCustomerMarker,
+  shouldShowRiderMarker,
+  shouldShowStoreMarker,
+} from '@/utils/trackingMapPhase';
+
+export type DeliveryOverride = {
+  lat: number;
+  lng: number;
+  addressLine?: string;
+};
 
 type Props = {
   snapshot: OrderTrackingSnapshot;
+  deliveryOverride?: DeliveryOverride;
+  bottomPadding?: number;
 };
 
-function showRiderMarker(sub: OrderTrackingSnapshot['subOrders'][0]): boolean {
-  const status = sub.status.toUpperCase();
+function MarkerBubble({
+  icon,
+  color,
+  backgroundColor,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  backgroundColor: string;
+}) {
   return (
-    Boolean(sub.partner) &&
-    (status === 'PICKED_UP' ||
-      status === 'OUT_FOR_DELIVERY' ||
-      sub.assignmentStatus === 'IN_PROGRESS')
+    <View style={[styles.markerBubble, { backgroundColor }]}>
+      <Ionicons name={icon} size={18} color={color} />
+    </View>
   );
 }
 
-function showStoreMarker(sub: OrderTrackingSnapshot['subOrders'][0]): boolean {
-  const status = sub.status.toUpperCase();
-  return status !== 'PICKED_UP' && status !== 'OUT_FOR_DELIVERY' && status !== 'DELIVERED';
-}
-
-export function OrderTrackingMap({ snapshot }: Props) {
+export function OrderTrackingMap({ snapshot, deliveryOverride, bottomPadding = 280 }: Props) {
   const mapRef = useRef<MapView>(null);
   const googleMaps = useGoogleMapsProvider();
-  const { delivery, subOrders } = snapshot;
+
+  const mergedSnapshot = useMemo((): OrderTrackingSnapshot => {
+    if (!deliveryOverride?.lat || !deliveryOverride?.lng) return snapshot;
+    const useOverride =
+      !snapshot.delivery.lat ||
+      !snapshot.delivery.lng ||
+      (Math.abs(snapshot.delivery.lat - 28.6139) < 0.0001 &&
+        Math.abs(snapshot.delivery.lng - 77.209) < 0.0001);
+    if (!useOverride) return snapshot;
+    return {
+      ...snapshot,
+      delivery: {
+        ...snapshot.delivery,
+        lat: deliveryOverride.lat,
+        lng: deliveryOverride.lng,
+        addressLine: deliveryOverride.addressLine ?? snapshot.delivery.addressLine,
+      },
+    };
+  }, [snapshot, deliveryOverride]);
+
+  const phase = getTrackingMapPhase(mergedSnapshot);
+  const routeSegments = getMapRouteSegments(mergedSnapshot, phase);
+  const { delivery, subOrders } = mergedSnapshot;
 
   useEffect(() => {
-    const coords: { latitude: number; longitude: number }[] = [
-      { latitude: delivery.lat, longitude: delivery.lng },
-    ];
-    for (const sub of subOrders) {
-      if (showStoreMarker(sub)) {
-        coords.push({ latitude: sub.pickup.lat, longitude: sub.pickup.lng });
-      }
-      if (showRiderMarker(sub) && sub.partner) {
-        coords.push({ latitude: sub.partner.lat, longitude: sub.partner.lng });
-      }
+    const coords = getMapFocusCoordinates(mergedSnapshot, phase);
+    if (coords.length === 0) return;
+    if (coords.length === 1) {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: coords[0].latitude,
+          longitude: coords[0].longitude,
+          latitudeDelta: phase === 'awaiting_partner' ? 0.018 : 0.012,
+          longitudeDelta: phase === 'awaiting_partner' ? 0.018 : 0.012,
+        },
+        400,
+      );
+      return;
     }
-    if (coords.length < 2) return;
     mapRef.current?.fitToCoordinates(coords, {
-      edgePadding: { top: 80, right: 48, bottom: 280, left: 48 },
+      edgePadding: { top: 80, right: 48, bottom: bottomPadding, left: 48 },
       animated: true,
     });
-  }, [delivery.lat, delivery.lng, subOrders]);
+  }, [mergedSnapshot, phase, bottomPadding]);
 
   const initial = {
-    latitude: delivery.lat || 28.6139,
-    longitude: delivery.lng || 77.209,
+    latitude: delivery.lat || deliveryOverride?.lat || 28.6139,
+    longitude: delivery.lng || deliveryOverride?.lng || 77.209,
     latitudeDelta: 0.04,
     longitudeDelta: 0.04,
   };
@@ -64,32 +106,46 @@ export function OrderTrackingMap({ snapshot }: Props) {
         showsUserLocation={false}
         showsMyLocationButton={false}
       >
-        <Marker
-          coordinate={{ latitude: delivery.lat, longitude: delivery.lng }}
-          title="Home"
-          pinColor="#2563eb"
-        />
+        {shouldShowCustomerMarker(phase) ? (
+          <Marker coordinate={{ latitude: delivery.lat, longitude: delivery.lng }} title="Home">
+            <MarkerBubble icon="home" color="#2563eb" backgroundColor="#dbeafe" />
+          </Marker>
+        ) : null}
+
         {subOrders
-          .filter(showStoreMarker)
+          .filter((sub) => shouldShowStoreMarker(sub, phase))
           .map((sub) => (
             <Marker
               key={`store-${sub.id}`}
               coordinate={{ latitude: sub.pickup.lat, longitude: sub.pickup.lng }}
               title={sub.storeName}
-              pinColor="#16a34a"
-            />
+            >
+              <MarkerBubble icon="storefront" color="#16a34a" backgroundColor="#dcfce7" />
+            </Marker>
           ))}
+
         {subOrders
-          .filter(showRiderMarker)
+          .filter((sub) => shouldShowRiderMarker(sub, phase))
           .filter((sub) => sub.partner)
           .map((sub) => (
             <Marker
               key={`rider-${sub.id}`}
               coordinate={{ latitude: sub.partner!.lat, longitude: sub.partner!.lng }}
               title={sub.partner!.displayName}
-              pinColor="#ea580c"
-            />
+            >
+              <MarkerBubble icon="bicycle" color="#ea580c" backgroundColor="#ffedd5" />
+            </Marker>
           ))}
+
+        {routeSegments.map((seg, i) => (
+          <Polyline
+            key={`route-${i}`}
+            coordinates={[seg.from, seg.to]}
+            strokeColor="#2563eb"
+            strokeWidth={4}
+            lineDashPattern={[1, 0]}
+          />
+        ))}
       </MapView>
     </View>
   );
@@ -97,4 +153,13 @@ export function OrderTrackingMap({ snapshot }: Props) {
 
 const styles = StyleSheet.create({
   wrap: { flex: 1 },
+  markerBubble: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
 });

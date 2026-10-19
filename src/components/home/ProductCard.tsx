@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const ProductCard = memo(function ProductCard({ product, width = CARD_WIDTH }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
   const addItem = useCartStore((s) => s.addItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const quantity = useCartStore((s) => s.getQuantity(product.id, product.storeId));
@@ -33,7 +33,19 @@ export const ProductCard = memo(function ProductCard({ product, width = CARD_WID
   }));
 
   return (
-    <Animated.View style={[styles.card, animStyle, { width }]}>
+    <Animated.View
+      style={[
+        styles.card,
+        animStyle,
+        shadows.sm,
+        {
+          width,
+          backgroundColor: colors.card,
+          borderRadius: radius.lg,
+          borderColor: colors.borderSubtle,
+        },
+      ]}
+    >
       <Pressable
         onPress={() => {
           Haptics.selectionAsync();
@@ -49,7 +61,7 @@ export const ProductCard = memo(function ProductCard({ product, width = CARD_WID
         <View
           style={[
             styles.imageWrap,
-            { backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, borderColor: colors.border },
+            { backgroundColor: colors.surfaceSecondary, borderRadius: radius.md, borderColor: colors.borderSubtle },
           ]}
         >
           <Image
@@ -74,7 +86,7 @@ export const ProductCard = memo(function ProductCard({ product, width = CARD_WID
             </View>
           ) : null}
         </View>
-        <View style={{ paddingTop: spacing.sm, paddingHorizontal: 2 }}>
+        <View style={{ paddingTop: spacing.sm, paddingHorizontal: spacing.sm, paddingBottom: spacing.sm }}>
           <Text style={[typography.caption, { color: colors.textMuted, fontWeight: '600' }]} numberOfLines={1}>
             {product.unit}
           </Text>
@@ -111,8 +123,8 @@ export const ProductCard = memo(function ProductCard({ product, width = CARD_WID
 });
 
 const styles = StyleSheet.create({
-  card: { marginRight: 12 },
-  imageWrap: { height: 136, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
+  card: { marginRight: 10, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
+  imageWrap: { height: 128, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, margin: 8, marginBottom: 0 },
   image: { width: '100%', height: '100%' },
   discountBadge: {
     position: 'absolute',
@@ -139,5 +151,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.45)',
   },
-  stepperWrap: { position: 'absolute', right: 8, top: 96 },
+  stepperWrap: { position: 'absolute', right: 10, top: 88 },
 });

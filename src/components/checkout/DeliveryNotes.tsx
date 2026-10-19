@@ -27,8 +27,8 @@ export function DeliveryNotes({ value, onChange }: Props) {
           styles.input,
           typography.bodySmall,
           {
-            backgroundColor: colors.surface,
-            borderColor: colors.border,
+            backgroundColor: colors.card,
+            borderColor: colors.borderSubtle,
             borderRadius: radius.lg,
             color: colors.text,
             padding: spacing.md,

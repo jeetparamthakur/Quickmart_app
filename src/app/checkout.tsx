@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
@@ -33,9 +33,10 @@ export default function CheckoutScreen() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   const [instructions, setInstructions] = useState('');
   const [loading, setLoading] = useState(false);
+  const checkoutCompleteRef = useRef(false);
 
   useEffect(() => {
-    if (cart.itemCount === 0) {
+    if (cart.itemCount === 0 && !checkoutCompleteRef.current) {
       router.replace('/(tabs)/cart');
     }
   }, [cart.itemCount]);
@@ -59,6 +60,11 @@ export default function CheckoutScreen() {
     }
     setLoading(true);
     try {
+      const itemCount = cart.itemCount;
+      const addressLine = [selectedAddress.line1, selectedAddress.city].filter(Boolean).join(', ');
+      const deliveryLat = String(selectedAddress.latitude);
+      const deliveryLng = String(selectedAddress.longitude);
+
       const result = await checkoutService.placeOrder({
         items: cart.items,
         addressId: selectedAddress.id,
@@ -66,7 +72,14 @@ export default function CheckoutScreen() {
         deliveryInstructions: instructions,
         couponCode: cart.couponCode ?? undefined,
       });
-      cart.clearCart();
+
+      if (!result.orderId) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert(t('placeOrderFailed'));
+        return;
+      }
+
+      checkoutCompleteRef.current = true;
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace({
         pathname: '/order-success',
@@ -75,6 +88,12 @@ export default function CheckoutScreen() {
           orderNumber: result.orderNumber,
           total: String(result.total),
           etaMinutes: String(result.estimatedDeliveryMinutes),
+          itemCount: String(itemCount),
+          paymentMethod,
+          addressLabel: selectedAddress.label,
+          addressLine,
+          deliveryLat,
+          deliveryLng,
         },
       });
     } catch {

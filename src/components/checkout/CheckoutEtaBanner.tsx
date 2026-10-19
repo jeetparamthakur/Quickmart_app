@@ -11,7 +11,7 @@ export function CheckoutEtaBanner({ minutes }: Props) {
   const { colors, typography, radius } = useTheme();
 
   return (
-    <View style={[styles.banner, { backgroundColor: colors.primaryLight, borderRadius: radius.md }]}>
+    <View style={[styles.banner, { backgroundColor: colors.primaryLight, borderRadius: radius.lg }]}>
       <Ionicons name="flash" size={16} color={colors.primary} />
       <Text style={[typography.label, { color: colors.primary, flex: 1 }]}>
         {t('deliveryInMinutes', { minutes })}

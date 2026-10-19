@@ -18,7 +18,7 @@ export function AddressSearchInput({
   placeholder = 'Search address in India...',
   label = 'Search address',
 }: Props) {
-  const { colors, spacing, radius, typography } = useTheme();
+  const { colors, spacing, radius, typography, shadows } = useTheme();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<AddressResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -69,11 +69,12 @@ export function AddressSearchInput({
         placeholderTextColor={colors.textMuted}
         style={[
           styles.input,
+          shadows.sm,
           {
             color: colors.text,
-            borderColor: colors.border,
-            backgroundColor: colors.surface,
-            borderRadius: radius.md,
+            borderColor: colors.borderSubtle,
+            backgroundColor: colors.card,
+            borderRadius: radius.lg,
           },
         ]}
         autoCorrect={false}
@@ -90,11 +91,12 @@ export function AddressSearchInput({
         <View
           style={[
             styles.results,
+            shadows.sm,
             {
               marginTop: spacing.sm,
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderRadius: radius.md,
+              backgroundColor: colors.card,
+              borderColor: colors.borderSubtle,
+              borderRadius: radius.lg,
             },
           ]}
         >
@@ -107,7 +109,7 @@ export function AddressSearchInput({
                 styles.resultRow,
                 index < results.length - 1 && {
                   borderBottomWidth: StyleSheet.hairlineWidth,
-                  borderBottomColor: colors.border,
+                  borderBottomColor: colors.borderSubtle,
                 },
               ]}
             >
@@ -125,7 +127,7 @@ export function AddressSearchInput({
 const styles = StyleSheet.create({
   container: {},
   input: {
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,

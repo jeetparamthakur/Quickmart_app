@@ -33,9 +33,11 @@ export function CategoryGrid({ categories, horizontal = true }: Props) {
           shadows.sm,
           {
             backgroundColor: cat.color || colors.primaryLight,
-            borderRadius: radius.md,
-            width: width - 10,
-            height: width - 8,
+            borderRadius: radius.full,
+            width: width - 12,
+            height: width - 12,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.borderSubtle,
           },
         ]}
       >

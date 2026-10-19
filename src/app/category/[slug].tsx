@@ -54,8 +54,8 @@ export default function CategoryScreen() {
             style={[
               styles.chip,
               {
-                backgroundColor: sort === c.key ? colors.primaryLight : colors.surface,
-                borderColor: sort === c.key ? colors.primary : colors.border,
+                backgroundColor: sort === c.key ? colors.primaryLight : colors.card,
+                borderColor: sort === c.key ? colors.primary : colors.borderSubtle,
                 borderRadius: radius.full,
               },
             ]}
@@ -75,7 +75,7 @@ export default function CategoryScreen() {
       {loading ? (
         <View style={{ padding: spacing.lg, flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} width={140} height={200} borderRadius={12} />
+            <Skeleton key={i} width={140} height={200} borderRadius={radius.lg} />
           ))}
         </View>
       ) : sorted.length === 0 ? (

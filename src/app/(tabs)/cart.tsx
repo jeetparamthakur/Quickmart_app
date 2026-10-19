@@ -143,9 +143,9 @@ export default function CartScreen() {
             styles.couponCard,
             shadows.sm,
             {
-              backgroundColor: colors.surface,
+              backgroundColor: colors.card,
               borderRadius: radius.lg,
-              borderColor: colors.border,
+              borderColor: colors.borderSubtle,
               padding: spacing.md,
             },
           ]}
@@ -201,7 +201,7 @@ export default function CartScreen() {
                     style={[
                       styles.chip,
                       {
-                        borderColor: couponInput.toUpperCase() === code ? colors.primary : colors.border,
+                        borderColor: couponInput.toUpperCase() === code ? colors.primary : colors.borderSubtle,
                         backgroundColor: couponInput.toUpperCase() === code ? colors.primaryLight : colors.background,
                       },
                     ]}
@@ -236,7 +236,7 @@ export default function CartScreen() {
         style={[
           styles.footer,
           shadows.lg,
-          { backgroundColor: colors.surface, borderTopColor: colors.border, padding: spacing.md },
+          { backgroundColor: colors.card, borderTopColor: colors.borderSubtle, padding: spacing.md },
         ]}
       >
         <Pressable

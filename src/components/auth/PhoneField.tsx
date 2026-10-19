@@ -17,7 +17,7 @@ function formatPhone(digits: string) {
 export function PhoneField({ value, onChange, error }: Props) {
   const { colors, spacing, typography, radius, shadows } = useTheme();
   const [focused, setFocused] = useState(false);
-  const borderColor = error ? colors.error : focused ? colors.primary : colors.border;
+  const borderColor = error ? colors.error : focused ? colors.primary : colors.borderSubtle;
 
   return (
     <View>
@@ -29,7 +29,7 @@ export function PhoneField({ value, onChange, error }: Props) {
           styles.row,
           shadows.sm,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.card,
             borderColor,
             borderRadius: radius.lg,
           },

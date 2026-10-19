@@ -28,9 +28,9 @@ export function OrderSummaryCard({ order, onPress }: Props) {
         styles.card,
         shadows.sm,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: colors.card,
           borderRadius: radius.lg,
-          borderColor: colors.border,
+          borderColor: colors.borderSubtle,
           opacity: pressed ? 0.92 : 1,
         },
       ]}

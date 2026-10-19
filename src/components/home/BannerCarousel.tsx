@@ -266,7 +266,7 @@ export function BannerCarousel({ banners }: Props) {
                 scrollX={scrollX}
                 snap={snap}
                 bannerWidth={bannerWidth}
-                borderRadius={radius.lg}
+                borderRadius={radius.xl}
                 isLast={i === banners.length - 1}
                 gap={gap}
                 onPress={() => handlePress(banner)}
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   imageFade: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: '55%',
   },
   chrome: {

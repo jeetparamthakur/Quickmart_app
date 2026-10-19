@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function CheckoutHeader({ itemCount }: Props) {
-  const { colors, spacing, typography } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
     <View style={[styles.header, { paddingHorizontal: spacing.lg }]}>
@@ -20,7 +20,11 @@ export function CheckoutHeader({ itemCount }: Props) {
           router.back();
         }}
         hitSlop={8}
-        style={[styles.back, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        style={[
+          styles.back,
+          shadows.sm,
+          { backgroundColor: colors.card, borderColor: colors.borderSubtle, borderRadius: radius.full },
+        ]}
       >
         <Ionicons name="chevron-back" size={22} color={colors.text} />
       </Pressable>

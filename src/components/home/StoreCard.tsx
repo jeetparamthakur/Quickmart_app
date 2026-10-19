@@ -20,7 +20,7 @@ export const StoreCard = memo(function StoreCard({ store, width }: Props) {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => router.push(`/store/${store.id}`)}
-      style={[styles.card, shadows.md, { width: cardWidth, backgroundColor: colors.surface, borderRadius: radius.md, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth, marginBottom: width ? 0 : 12 }]}
+      style={[styles.card, shadows.md, { width: cardWidth, backgroundColor: colors.card, borderRadius: radius.lg, borderColor: colors.borderSubtle, borderWidth: StyleSheet.hairlineWidth, marginBottom: width ? 0 : 12 }]}
     >
       <Image source={{ uri: store.image }} style={[styles.image, { borderTopLeftRadius: radius.md, borderTopRightRadius: radius.md }]} contentFit="cover" />
       <View style={{ padding: spacing.md }}>

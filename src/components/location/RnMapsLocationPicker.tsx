@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 0,
   },
-  map: { ...StyleSheet.absoluteFillObject, flex: 1 },
+  map: { ...StyleSheet.absoluteFill, flex: 1 },
   centerPin: {
     position: 'absolute',
     top: '50%',

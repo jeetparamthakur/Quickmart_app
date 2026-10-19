@@ -32,13 +32,13 @@ export function MiniCartBar() {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           router.push('/(tabs)/cart');
         }}
-        style={[shadows.lg, { borderRadius: radius.lg }]}
+        style={[shadows.lg, { borderRadius: radius.full }]}
       >
         <LinearGradient
           colors={[colors.primary, colors.primaryDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[styles.bar, { borderRadius: radius.lg }]}
+          style={[styles.bar, { borderRadius: radius.full }]}
         >
           <View style={styles.left}>
             <View style={styles.thumbs}>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   left: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
   thumbs: { flexDirection: 'row', alignItems: 'center' },

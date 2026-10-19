@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function FaqItem({ question, answer, expanded, onToggle }: Props) {
-  const { colors, spacing, typography, radius } = useTheme();
+  const { colors, spacing, typography, radius, shadows } = useTheme();
 
   return (
     <PressableScale
@@ -22,10 +22,11 @@ export function FaqItem({ question, answer, expanded, onToggle }: Props) {
       }}
       style={[
         styles.wrap,
+        shadows.sm,
         {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderRadius: radius.md,
+          backgroundColor: colors.card,
+          borderColor: colors.borderSubtle,
+          borderRadius: radius.lg,
           marginBottom: spacing.sm,
         },
       ]}
